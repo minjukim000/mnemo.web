@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MNEMO | Perfume Archive</title>
+    <style>
+        :root {
+            --bg-color: #F5F1EA;     /* 오래된 종이색 */
+            --point-color: #A36B5E;  /* 멤피스 로즈 */
+            --text-color: #2A2A2A;   /* 차콜 블랙 */
+            --cursor-size: 150px; 
+        }
+
+        body, html {
+            margin: 0; padding: 0;
+            width: 100%;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Playfair Display', 'Noto Serif KR', serif;
+            overflow-x: hidden;
+        }
+
+        /* 1. GNB (고정 메뉴) */
+        nav {
+            position: fixed; width: 100%; top: 0;
+            display: flex; justify-content: space-between;
+            padding: 30px 50px; box-sizing: border-box;
+            z-index: 100;
+        }
+        .nav-links a {
+            text-decoration: none; color: var(--text-color);
+            margin-left: 30px; font-size: 13px; letter-spacing: 2px;
+        }
+
+        /* 2. 히어로 섹션 (안개 인터랙션) */
+        .hero-section {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: var(--bg-color);
+        }
+
+        .img-clear {
+            position: absolute;
+            width: 80%; max-width: 1000px;
+            z-index: 1;
+        }
+
+        .img-foggy {
+            position: absolute;
+            width: 80%; max-width: 1000px;
+            z-index: 2;
+            filter: blur(25px);
+            transition: filter 1.5s ease;
+            
+            /* 마우스 마스킹 */
+            -webkit-mask-image: radial-gradient(
+                circle var(--cursor-size) at var(--mouse-x, -100%) var(--mouse-y, -100%),
+                transparent 0%,
+                black 100%
+            );
+            mask-image: radial-gradient(
+                circle var(--cursor-size) at var(--mouse-x, -100%) var(--mouse-y, -100%),
+                transparent 0%,
+                black 100%
+            );
+        }
+
+        .img-foggy.is-clear {
+            filter: blur(0) !important;
+            mask-image: none !important;
+            -webkit-mask-image: none !important;
+        }
+
+        .instruction {
+            position: absolute; bottom: 50px;
+            font-size: 11px; letter-spacing: 4px;
+            z-index: 10; opacity: 0.6;
+        }
+
+        /* 3. 브랜드 소개 섹션 (추가된 부분) */
+        .about-section {
+            position: relative;
+            background-color: var(--bg-color);
+            padding: 180px 10%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 20;
+            /* 종이 질감 효과 */
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+        }
+
+        .about-title {
+            font-size: 3rem;
+            font-weight: 400;
+            letter-spacing: 8px;
+            margin-bottom: 60px;
+            color: var(--point-color);
+        }
+
+        .about-text {
+            max-width: 700px;
+            font-size: 1.15rem;
+            line-height: 2;
+            text-align: center;
+            word-break: keep-all;
+        }
+
+        .about-text span {
+            display: block;
+            margin-top: 30px;
+            font-style: italic;
+            opacity: 0.7;
+        }
+
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="logo-small">MNEMO</div>
+        <div class="nav-links">
+            <a href="#">MEMORIES</a>
+            <a href="#">ARCHIVE</a>
+            <a href="#">CABINET</a>
+        </div>
+    </nav>
+
+    <section class="hero-section" id="hero">
+        <img src="ve.png" class="img-clear">
+        <img src="ve.png" class="img-foggy" id="fogLayer">
+        <div class="instruction">MOVE CURSOR TO RECALL</div>
+    </section>
+
+    <section class="about-section">
+        <h2 class="about-title">ARCHIVE YOUR SCENT</h2>
+        <div class="about-text">
+            기억은 완벽하지 않습니다. 시간이 흐를수록 형태는 무너지고, <br>
+            찰나의 순간들은 안개 속으로 사라지곤 합니다. <br><br>
+            MNEMO는 그 불완전한 틈새에 주목합니다. <br>
+            우리는 당신의 마음속에 남은 <strong>잔상(Afterimage)</strong>을 <br>
+            향기로 기록하는 디지털 아카이브를 지향합니다.
+            <span>"The Art of Remembering"</span>
+            <span>"사라지는 당신의 찰나의 순간을 병속에 가두다"</span>
+        </div>
+    </section>
+
+    <script>
+        const fogLayer = document.getElementById('fogLayer');
+        const hero = document.getElementById('hero');
+
+        // 마우스 무브 인터랙션
+        window.addEventListener('mousemove', (e) => {
+            const rect = fogLayer.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+
+            fogLayer.style.setProperty('--mouse-x', x + 'px');
+            fogLayer.style.setProperty('--mouse-y', y + 'px');
+        });
+
+        // 클릭 시 전체 선명화
+        hero.addEventListener('click', () => {
+            fogLayer.classList.toggle('is-clear');
+        });
+    </script>
+    
+</body>
+</html>
