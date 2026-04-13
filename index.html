@@ -3,13 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MNEMO | Perfume Archive</title>
+    <title>MNEMO | Archive of Memories</title>
     <style>
         :root {
-            --bg-color: #F5F1EA;     /* 오래된 종이색 */
-            --point-color: #A36B5E;  /* 멤피스 로즈 */
-            --text-color: #2A2A2A;   /* 차콜 블랙 */
-            --cursor-size: 150px; 
+            --bg-color: #F5F1EA;
+            --point-color: #A36B5E;
+            --text-color: #2A2A2A;
+            --cursor-size: 200px;
+            --nav-height: 80px; 
         }
 
         body, html {
@@ -21,43 +22,63 @@
             overflow-x: hidden;
         }
 
-        /* 1. GNB (고정 메뉴) */
-        nav {
-            position: fixed; width: 100%; top: 0;
-            display: flex; justify-content: space-between;
-            padding: 30px 50px; box-sizing: border-box;
-            z-index: 100;
+        #trailCanvas {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 999; 
         }
+
+        nav {
+            position: fixed; 
+            width: 100%; 
+            top: 0;
+            height: var(--nav-height);
+            display: flex; 
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 50px; 
+            box-sizing: border-box;
+            background-color: var(--bg-color);
+            z-index: 1000;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+        .logo-small { font-weight: bold; letter-spacing: 3px; }
         .nav-links a {
             text-decoration: none; color: var(--text-color);
             margin-left: 30px; font-size: 13px; letter-spacing: 2px;
+            font-weight: 600;
         }
 
-        /* 2. 히어로 섹션 (안개 인터랙션) */
         .hero-section {
             position: relative;
-            width: 100%;
-            height: 100vh;
-            display: flex;
-            justify-content: center;
+            width: 100%; 
+            height: calc(100vh - var(--nav-height));
+            margin-top: var(--nav-height);
+            display: flex; 
+            justify-content: center; 
             align-items: center;
             background-color: var(--bg-color);
+            overflow: hidden;
         }
 
-        .img-clear {
+        .img-clear, .img-foggy {
             position: absolute;
-            width: 80%; max-width: 1000px;
-            z-index: 1;
+            width: 100%; 
+            height: 100%;
+            object-fit: cover;
+            top: 0;
+            left: 0;
         }
+
+        .img-clear { z-index: 1; }
 
         .img-foggy {
-            position: absolute;
-            width: 80%; max-width: 1000px;
             z-index: 2;
-            filter: blur(25px);
+            filter: blur(40px);
             transition: filter 1.5s ease;
             
-            /* 마우스 마스킹 */
             -webkit-mask-image: radial-gradient(
                 circle var(--cursor-size) at var(--mouse-x, -100%) var(--mouse-y, -100%),
                 transparent 0%,
@@ -80,61 +101,228 @@
             position: absolute; bottom: 50px;
             font-size: 11px; letter-spacing: 4px;
             z-index: 10; opacity: 0.6;
+            color: #2A2A2A;
         }
 
-        /* 3. 브랜드 소개 섹션 (추가된 부분) */
         .about-section {
             position: relative;
             background-color: var(--bg-color);
-            padding: 180px 10%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            padding: 150px 10%;
+            display: flex; flex-direction: column; align-items: center;
             z-index: 20;
-            /* 종이 질감 효과 */
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
         }
 
         .about-title {
-            font-size: 3rem;
-            font-weight: 400;
-            letter-spacing: 8px;
-            margin-bottom: 60px;
-            color: var(--point-color);
+            font-size: 2.5rem; letter-spacing: 8px;
+            margin-bottom: 40px; color: var(--point-color);
         }
 
         .about-text {
-            max-width: 700px;
-            font-size: 1.15rem;
-            line-height: 2;
-            text-align: center;
-            word-break: keep-all;
+            max-width: 700px; font-size: 1.1rem;
+            line-height: 2.2; text-align: center; word-break: keep-all;
         }
 
-        .about-text span {
-            display: block;
-            margin-top: 30px;
-            font-style: italic;
-            opacity: 0.7;
+        .card-container {
+            display: flex;
+            gap: 20px;
+            width: 100%;
+            max-width: 1100px;
+            justify-content: center;
+            margin-top: 250px; 
+            padding-bottom: 150px; 
         }
+
+        .card {
+            position: relative;
+            flex: 1;
+            height: 450px;
+            background-color: #2a2a2a;
+            border-radius: 40px;
+            overflow: hidden;
+            transition: all 0.7s cubic-bezier(0.23, 1, 0.32, 1);
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 40px 30px;
+            box-sizing: border-box;
+        }
+
+        .card::after {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to bottom, transparent 40%, rgba(0,0,0,0.7));
+            z-index: 1;
+        }
+
+        .card-content {
+            position: relative;
+            z-index: 2;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.5s ease;
+            color: #fff;
+        }
+
+        .card-tag {
+            font-size: 0.7rem;
+            letter-spacing: 3px;
+            margin-bottom: 10px;
+            display: block;
+            color: var(--point-color);
+        }
+
+        .card-title {
+            font-size: 1.8rem;
+            margin: 0 0 15px 0;
+            letter-spacing: 2px;
+        }
+
+        .card-desc {
+            font-size: 0.9rem;
+            line-height: 1.6;
+            opacity: 0.8;
+            font-weight: 300;
+        }
+
+        .card-container:hover .card:hover {
+            flex: 2.5;
+            transform: scale(1.02);
+        }
+
+        .card-container:hover .card:hover .card-content {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .card-container:hover .card:not(:hover) {
+            flex: 0.7;
+            filter: blur(8px);
+            opacity: 0.4;
+            transform: scale(0.95);
+        }
+
+        /* --- [추가된 커스텀 인터렉션 전용 스타일] --- */
+        .custom-section {
+            width: 100%;
+            max-width: 1200px;
+            display: flex;
+            margin: 50px auto 150px auto;
+            background-color: rgba(255,255,255,0.3);
+            border-radius: 50px;
+            overflow: hidden;
+            border: 1px solid rgba(0,0,0,0.03);
+        }
+
+        .custom-visual {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 50px;
+            background-color: #fff;
+        }
+
+        .bottle-preview {
+            width: 70%;
+            filter: blur(20px);
+            transition: filter 0.3s ease-out;
+        }
+
+        .custom-controls {
+            flex: 1;
+            padding: 60px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            text-align: left;
+        }
+
+        .clarity-slider {
+            width: 100%;
+            appearance: none;
+            height: 2px;
+            background: #d1d1d1;
+            outline: none;
+            margin: 30px 0;
+        }
+
+        .clarity-slider::-webkit-slider-thumb {
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            background: var(--point-color);
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .note-selection {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .note-chip {
+            padding: 8px 18px;
+            border: 1px solid rgba(0,0,0,0.1);
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .note-chip.active {
+            background-color: var(--text-color);
+            color: white;
+        }
+
+        /* 생성하기 버튼 링크 스타일 */
+.create-btn-link {
+    text-decoration: none;
+    display: block;
+    margin-top: 50px;
+}
+
+.create-scent-btn {
+    width: 100%;
+    padding: 20px;
+    background-color: var(--text-color); /* 차콜 블랙 */
+    color: var(--bg-color); /* 크림색 글자 */
+    border: none;
+    border-radius: 0; /* MNEMO의 각진 디자인 유지 */
+    font-family: 'Noto Serif KR', serif;
+    font-size: 0.9rem;
+    letter-spacing: 5px;
+    cursor: pointer;
+    transition: all 0.4s ease;
+}
+
+.create-scent-btn:hover {
+    background-color: var(--point-color); /* 호버 시 멤피스 로즈 색상으로 변경 */
+    letter-spacing: 8px; /* 호버 시 글자 사이가 벌어지는 인터랙션 */
+}
 
     </style>
 </head>
 <body>
 
+    <canvas id="trailCanvas"></canvas>
+
     <nav>
         <div class="logo-small">MNEMO</div>
         <div class="nav-links">
-            <a href="#">MEMORIES</a>
+            <a href="login.html">MEMORIES</a>
             <a href="#">ARCHIVE</a>
             <a href="#">CABINET</a>
         </div>
     </nav>
 
     <section class="hero-section" id="hero">
-        <img src="ve.png" class="img-clear">
-        <img src="ve.png" class="img-foggy" id="fogLayer">
-        <div class="instruction">MOVE CURSOR TO RECALL</div>
+        <img src="ve.png" class="img-clear" alt="Clear Memory">
+        <img src="ve.png" class="img-foggy" id="fogLayer" alt="Foggy Memory">
+        <div class="instruction">MOVE TO TRACE, CLICK TO RECALL</div>
     </section>
 
     <section class="about-section">
@@ -145,30 +333,156 @@
             MNEMO는 그 불완전한 틈새에 주목합니다. <br>
             우리는 당신의 마음속에 남은 <strong>잔상(Afterimage)</strong>을 <br>
             향기로 기록하는 디지털 아카이브를 지향합니다.
-            <span>"The Art of Remembering"</span>
-            <span>"사라지는 당신의 찰나의 순간을 병속에 가두다"</span>
+        </div>
+
+        <div class="card-container">
+            <div class="card" style="background-image: url('https://images.unsplash.com/photo-1557170343-63238719f9f8?auto=format&fit=crop&q=80&w=600'); background-size: cover; background-position: center;">
+                <div class="card-content">
+                    <span class="card-tag">FRAGMENTS 01</span>
+                    <h3 class="card-title">No. 1998</h3>
+                    <p class="card-desc">할머니 댁 평상, 매미 소리. 시원한 삼베 향과 흙내음이 섞인 어린 시절의 공기.</p>
+                </div>
+            </div>
+            <div class="card" style="background-image: url('https://images.unsplash.com/photo-1515516089376-88db1e26e9c0?auto=format&fit=crop&q=80&w=600'); background-size: cover; background-position: center;">
+                <div class="card-content">
+                    <span class="card-tag">FRAGMENTS 02</span>
+                    <h3 class="card-title">No. 2015</h3>
+                    <p class="card-desc">비 내리는 파리, 퐁네프의 오후. 젖은 보도블록과 차가운 금속 향의 기억.</p>
+                </div>
+            </div>
+            <div class="card" style="background-image: url('https://images.unsplash.com/photo-1544175016-16086884149b?auto=format&fit=crop&q=80&w=600'); background-size: cover; background-position: center;">
+                <div class="card-content">
+                    <span class="card-tag">FRAGMENTS 03</span>
+                    <h3 class="card-title">No. 2022</h3>
+                    <p class="card-desc">첫 출근 날의 긴장과 설레임. 새 옷 냄새와 파우더리한 향이 감도는 순간.</p>
+                </div>
+            </div>
         </div>
     </section>
 
+    <center> <h2 style="letter-spacing: 5px;">당신의 기억은?</h2> </center>
+    <br> <br> <hr style="width: 80%; opacity: 0.1;"> <br> <br>
+
+    <div class="custom-section">
+        <div class="custom-visual">
+            <img src="ve.png" id="customBottle" class="bottle-preview">
+        </div>
+        <div class="custom-controls">
+            <p style="font-size: 0.7rem; color: var(--point-color); letter-spacing: 2px;">STEP 01. CLARITY</p>
+            <h3 style="margin-top: 5px;">기억의 선명도 조절</h3>
+            <input type="range" min="0" max="20" value="20" class="clarity-slider" id="customSlider">
+            <div style="display: flex; justify-content: space-between; font-size: 0.7rem; opacity: 0.5;">
+                <span>VAGUE</span>
+                <span>VIVID</span>
+            </div>
+
+            <p style="font-size: 0.7rem; color: var(--point-color); letter-spacing: 2px; margin-top: 40px;">STEP 02. SCENT NOTES</p>
+            <h3 style="margin-top: 5px;">그날의 향을 선택하세요</h3>
+            <div class="note-selection">
+                <div class="note-chip">MISTY RAIN</div>
+                <div class="note-chip">OLD PAPER</div>
+                <div class="note-chip">WOODY DUST</div>
+                <div class="note-chip">SOAPY</div>
+            </div>
+            <p style="font-size: 0.7rem; color: var(--point-color); letter-spacing: 2px; margin-top: 40px;">STEP 02. SCENT NOTES</p>
+<h3 style="margin-top: 5px;">그날의 기억을 선택하세요</h3>
+<div class="note-selection">
+    <div class="note-chip">우울한</div>
+    <div class="note-chip">기쁜</div>
+    <div class="note-chip">먼지낀</div>
+    <div class="note-chip">맑은</div>
+</div>
+
+<a href="recording.html" class="create-btn-link">
+    <button class="create-scent-btn">나의 향 생성하기</button>
+</a>
+        </div>
+    </div>
+
+
     <script>
         const fogLayer = document.getElementById('fogLayer');
+        const canvas = document.getElementById('trailCanvas');
+        const ctx = canvas.getContext('2d');
         const hero = document.getElementById('hero');
+        let ripples = [];
+        let moveCount = 0;
 
-        // 마우스 무브 인터랙션
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        class Ripple {
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+                this.radius = 5;
+                this.opacity = 1;
+                this.velocity = 1.2;
+            }
+            update() {
+                this.radius += this.velocity;
+                this.opacity -= 0.015;
+            }
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.strokeStyle = `rgba(163, 107, 94, ${this.opacity})`;
+                ctx.lineWidth = 1;
+                ctx.stroke();
+                ctx.closePath();
+            }
+        }
+
         window.addEventListener('mousemove', (e) => {
-            const rect = fogLayer.getBoundingClientRect();
+            const rect = hero.getBoundingClientRect();
             const x = e.clientX - rect.left;
             const y = e.clientY - rect.top;
 
             fogLayer.style.setProperty('--mouse-x', x + 'px');
             fogLayer.style.setProperty('--mouse-y', y + 'px');
+
+            moveCount++;
+            if (moveCount % 4 === 0 && ripples.length < 15) { 
+                ripples.push(new Ripple(e.clientX, e.clientY));
+            }
         });
 
-        // 클릭 시 전체 선명화
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let i = 0; i < ripples.length; i++) {
+                ripples[i].update();
+                ripples[i].draw();
+                if (ripples[i].opacity <= 0) {
+                    ripples.splice(i, 1);
+                    i--;
+                }
+            }
+            requestAnimationFrame(animate);
+        }
+        animate();
+
         hero.addEventListener('click', () => {
             fogLayer.classList.toggle('is-clear');
         });
+
+        /* --- [커스텀 섹션용 스크립트] --- */
+        const customSlider = document.getElementById('customSlider');
+        const customBottle = document.getElementById('customBottle');
+        const chips = document.querySelectorAll('.note-chip');
+
+        customSlider.oninput = function() {
+            customBottle.style.filter = `blur(${this.value}px)`;
+        };
+
+        chips.forEach(chip => {
+            chip.onclick = function() {
+                this.classList.toggle('active');
+            };
+        });
     </script>
-    
 </body>
 </html>

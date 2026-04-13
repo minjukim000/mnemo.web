@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MNEMO | Personal Archive Service</title>
+    <style>
+        :root {
+            --bg-color: #F5F1EA; 
+            --point-color: #A36B5E;
+            --text-color: #2A2A2A;
+            --line-color: rgba(0, 0, 0, 0.1);
+        }
+
+        body, html {
+            margin: 0; padding: 0;
+            width: 100%; height: 100%;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Playfair Display', 'Noto Serif KR', serif;
+            display: flex; justify-content: center; align-items: center;
+            /* 배경 종이 질감 레이어 */
+            background-image: 
+                linear-gradient(rgba(245, 241, 234, 0.8), rgba(245, 241, 234, 0.8)),
+                url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.15'/%3E%3C/svg%3E");
+        }
+
+        /* 아카이브 기록지 컨테이너 */
+        .archive-paper {
+            width: 90%;
+            max-width: 950px;
+            background: #fff;
+            padding: 70px;
+            box-shadow: 10px 10px 40px rgba(0,0,0,0.03);
+            position: relative;
+            display: flex;
+            gap: 60px;
+            animation: slideUp 1.2s ease;
+            /* 기록지 내부 미세 종이 질감 */
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='paper'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.04' numOctaves='5' stitchTiles='stitch'/%3E%3CfeDiffuseLighting in='noise' lighting-color='white' surfaceScale='1'%3E%3CfeDistantLight azimuth='45' elevation='60'/%3E%3C/feDiffuseLighting%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23paper)' opacity='0.03'/%3E%3C/svg%3E");
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 왼쪽 섹션 */
+        .product-view {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center; 
+            justify-content: center;
+            border-right: 1px solid var(--line-color);
+            padding-right: 60px;
+        }
+
+        .user-logo-container {
+            width: 300px;
+            margin-bottom: 50px;
+            cursor: pointer;
+        }
+
+        .image-preview-box {
+            width: 300px;
+            height: 300px;
+            border: 1px dashed var(--line-color);
+            background-color: rgba(255, 255, 255, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .image-preview-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .upload-text {
+            font-size: 0.8rem;
+            letter-spacing: 2px;
+            color: var(--point-color);
+            opacity: 0.6;
+            text-align: center;
+            line-height: 1.5;
+        }
+
+        .label-stamp {
+            border: 1px solid var(--text-color);
+            padding: 20px;
+            width: 100%;
+            text-align: left;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.8rem;
+            line-height: 1.8;
+            box-sizing: border-box;
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        /* 오른쪽 섹션 */
+        .form-view {
+            flex: 1.2;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .archive-header {
+            margin-bottom: 50px;
+        }
+
+        .archive-header h1 {
+            font-size: 2.8rem;
+            margin: 0;
+            letter-spacing: 5px;
+            font-weight: 400;
+        }
+
+        .archive-header p {
+            font-size: 0.85rem;
+            opacity: 0.4;
+            letter-spacing: 4px;
+            margin-top: 10px;
+        }
+
+        .input-section {
+            margin-bottom: 35px;
+        }
+
+        .input-section label {
+            display: block;
+            font-size: 0.75rem;
+            letter-spacing: 2px;
+            margin-bottom: 12px;
+            color: var(--point-color);
+            font-weight: bold;
+        }
+
+        .archive-input {
+            width: 100%;
+            border: none;
+            border-bottom: 1px solid var(--line-color);
+            padding: 10px 0;
+            font-family: inherit;
+            font-size: 1.1rem;
+            background: transparent;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .archive-input:focus {
+            border-bottom-color: var(--text-color);
+        }
+
+        .order-btn {
+            margin-top: auto;
+            background: #2a2a2a;
+            color: #fff;
+            border: none;
+            padding: 22px;
+            letter-spacing: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+        }
+
+        .order-btn:hover {
+            background: var(--point-color);
+            letter-spacing: 10px;
+        }
+
+        .back-link {
+            position: fixed;
+            top: 40px; left: 40px;
+            text-decoration: none;
+            color: var(--text-color);
+            font-size: 0.7rem;
+            letter-spacing: 2px;
+            opacity: 0.5;
+        }
+    </style>
+</head>
+<body>
+
+    <a href="index.html" class="back-link">← RETURN TO EDIT</a>
+
+    <div class="archive-paper">
+        <div class="product-view">
+            <div class="user-logo-container" onclick="document.getElementById('fileInput').click();">
+                <input type="file" id="fileInput" accept="image/*" style="display: none;">
+                <div id="imagePreview" class="image-preview-box">
+                    <span class="upload-text">CLICK TO UPLOAD<br>YOUR MEMORY PHOTO</span>
+                </div>
+            </div>
+            
+            <div class="label-stamp">
+                [ TYPE: MEMORY ARCHIVE ]<br>
+                [ CODE: MN-0924 ]<br>
+                [ STATUS: RECORDING ]<br>
+                -------------------------<br>
+                SCENT NOTES:<br>
+                - WOODY DUST<br>
+                - MISTY RAIN
+            </div>
+        </div>
+
+        <div class="form-view">
+            <div class="archive-header">
+                <h1>RECORDING</h1>
+                <p>기억의 조각을 기록하십시오</p>
+            </div>
+
+            <div class="input-section">
+                <label>MEMORY DATE (날짜)</label>
+                <input type="text" id="inputDate" class="archive-input" placeholder="YYYY. MM. DD">
+            </div>
+
+            <div class="input-section">
+                <label>MEMORY LOCATION (장소)</label>
+                <input type="text" id="inputLoc" class="archive-input" placeholder="어디에서의 기억인가요?">
+            </div>
+
+            <div class="input-section">
+                <label>MEMORY TITLE (제목)</label>
+                <input type="text" id="inputTitle" class="archive-input" placeholder="이 향의 이름을 지어주세요">
+            </div>
+
+            <button class="order-btn" onclick="validateArchive()">
+                COMPLETE ARCHIVING
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // 이미지 미리보기 로직
+        const fileInput = document.getElementById('fileInput');
+        const imagePreview = document.getElementById('imagePreview');
+
+        fileInput.addEventListener('change', function() {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    imagePreview.innerHTML = `<img src="${e.target.result}" alt="Uploaded Photo">`;
+                    imagePreview.style.borderStyle = "solid";
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // 유효성 검사 및 데이터 저장 후 이동 로직
+        function validateArchive() {
+            const date = document.getElementById('inputDate').value.trim();
+            const loc = document.getElementById('inputLoc').value.trim();
+            const title = document.getElementById('inputTitle').value.trim();
+            const image = document.querySelector('#imagePreview img')?.src; // 업로드된 이미지 URL 추출
+
+            if (date === "" || loc === "" || title === "") {
+                alert("기억의 모든 조각(날짜, 장소, 제목)을 채워주세요.");
+            } else {
+                // localStorage에 데이터 저장 (다음 페이지에서 쓰기 위함)
+                localStorage.setItem('memoryDate', date);
+                localStorage.setItem('memoryLoc', loc);
+                localStorage.setItem('memoryTitle', title);
+                if(image) localStorage.setItem('memoryImage', image);
+
+                alert("당신의 기억이 아카이브에 안전하게 저장되었습니다.");
+                
+                // 결과 리포트 페이지(result.html)로 이동
+                window.location.href = "result.html"; 
+            }
+        }
+    </script>
+
+</body>
+</html>
