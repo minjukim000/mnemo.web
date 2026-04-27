@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MNEMO | Memory Departure</title>
+    <style>
+        :root {
+            --bg-color: #F5F1EA;
+            --point-color: #A36B5E; 
+            --text-color: #2A2A2A;
+            --airport-blue: #1A2634; 
+            --card-bg: #ffffff;
+            --border-light: rgba(0,0,0,0.1);
+            --mood-color: var(--point-color);
+        }
+
+        .blue-mood {
+            --mood-color: var(--airport-blue) !important;
+        }
+
+        body, html {
+            margin: 0; padding: 0;
+            width: 100%; height: 100%;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Playfair Display', 'Noto Serif KR', serif;
+            display: flex; justify-content: center; align-items: center;
+            overflow: hidden;
+        }
+
+        .main-wrapper {
+            width: 100%; height: 100%;
+            display: flex; justify-content: center; align-items: center;
+            transition: filter 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .content-blur {
+            filter: blur(4px) !important;
+        }
+
+        .airport-header {
+            position: absolute; top: 0; width: 100%;
+            background: var(--airport-blue);
+            color: #fff; padding: 15px 50px;
+            display: flex; justify-content: space-between;
+            font-family: monospace; font-size: 0.75rem; letter-spacing: 2px;
+            box-sizing: border-box; z-index: 10;
+            transition: filter 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .custom-card {
+            width: 95%; max-width: 1200px; height: 700px;
+            background-color: #fff; border-radius: 20px;
+            display: flex; overflow: hidden;
+            box-shadow: 0 50px 100px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        .window-panel { flex: 1.2; background: #ffffff; display: flex; justify-content: center; align-items: center; position: relative; overflow: hidden; }
+        
+        .window-frame {
+            width: 320px; height: 460px; 
+            background: var(--mood-color); 
+            border-radius: 150px;
+            border: 15px solid transparent;
+            box-shadow: inset 0 0 40px rgba(0,0,0,0.5);
+            overflow: hidden; position: relative; display: flex; justify-content: center; align-items: center;
+            transition: background-color 0.8s ease; 
+        }
+
+        .bottle-image { width: 150%; height: 110%; object-fit: cover; filter: blur(25px); transition: filter 1.2s cubic-bezier(0.4, 0, 0.2, 1); }
+
+        .check-in-panel { flex: 1; padding: 60px; display: flex; flex-direction: column; justify-content: center; background: #fff; border-left: 1px solid #eee; }
+        .boarding-pass-title { font-size: 0.7rem; color: var(--mood-color); letter-spacing: 4px; margin-bottom: 5px; border-bottom: 1px solid var(--mood-color); display: inline-block; padding-bottom: 5px; transition: color 0.5s; }
+        .main-instruction { font-size: 1.8rem; margin: 15px 0 40px 0; font-weight: 500; letter-spacing: -1px; }
+        .input-group { margin-bottom: 40px; }
+        .input-label { font-size: 0.65rem; color: #999; margin-bottom: 15px; font-family: monospace; }
+        .chip-container { display: flex; flex-wrap: wrap; gap: 8px; }
+        .chip { padding: 12px 18px; border: 1px solid #ddd; background: none; font-size: 0.8rem; cursor: pointer; transition: 0.3s; color: #777; }
+        .chip.active { background-color: var(--airport-blue); color: #fff; border-color: var(--airport-blue); }
+
+        .confirm-btn { width: 100%; padding: 25px; background-color: #eee; color: #aaa; border: none; font-size: 0.9rem; letter-spacing: 5px; cursor: not-allowed; transition: all 0.5s; margin-top: 20px; }
+        .confirm-btn.active { background-color: var(--mood-color); color: #fff; cursor: pointer; }
+
+        /* --- [Modal 1] 이미지 선택 섹션 (수정된 부분) --- */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.3); display: none; justify-content: center; align-items: center; z-index: 100; opacity: 0; transition: opacity 0.4s ease, filter 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
+        .modal-overlay.show { display: flex; opacity: 1; }
+        .selection-container { width: 520px; background-color: var(--card-bg); box-shadow: 0 30px 70px rgba(0,0,0,0.3); border-radius: 8px; overflow: hidden; display: flex; flex-direction: column; transform: translateY(30px); transition: transform 0.4s ease; }
+        .modal-overlay.show .selection-container { transform: translateY(0); }
+        .selection-header { background-color: var(--mood-color); color: white; padding: 35px; transition: background-color 0.5s; }
+        .header-title { font-size: 1.8rem; font-weight: 700; margin-bottom: 12px; font-family: 'Noto Serif KR'; }
+        .header-desc { font-size: 1rem; line-height: 1.5; opacity: 0.9; font-family: 'Noto Serif KR'; }
+        .image-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; padding: 6px; background-color: #fff; }
+        
+        /* [핵심 수정] 그리드 아이템 및 이미지 효과 */
+        .grid-item { aspect-ratio: 1 / 1; background-color: #eee; position: relative; cursor: pointer; overflow: hidden; }
+        .grid-item img { 
+            width: 100%; height: 100%; object-fit: cover; 
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), filter 0.3s ease; 
+        }
+        
+        /* 1. 커서를 올리면 살짝 확대 */
+        .grid-item:hover img {
+            transform: scale(1.1);
+            filter: brightness(1.05);
+        }
+
+        /* 2. 선택을 하면 아주 약간 작아짐 (0.95배) */
+        .grid-item.selected img {
+            transform: scale(0.95);
+            filter: brightness(0.85);
+        }
+
+        .grid-item.selected::after { content: '✓'; position: absolute; top: 10px; left: 10px; background-color: var(--mood-color); color: white; width: 32px; height: 32px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 18px; font-weight: bold; z-index: 10; transition: background-color 0.5s; }
+        
+        .selection-footer { padding: 20px 25px; display: flex; justify-content: flex-end; align-items: center; border-top: 1px solid var(--border-light); }
+        .popup-confirm-btn { background-color: var(--mood-color); color: white; border: none; padding: 12px 35px; border-radius: 4px; font-size: 1.1rem; font-weight: 600; cursor: pointer; transition: background-color 0.5s; font-family: 'Noto Serif KR'; }
+
+        /* --- [Modal 2] 캡차 영역 --- */
+        .captcha-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(245, 241, 234, 0.2); display: none; justify-content: center; align-items: center; z-index: 200; }
+        .captcha-box { width: 315px; height: 78px; background-color: #f9f9f9; border: 1px solid #d3d3d3; border-radius: 3px; display: flex; align-items: center; padding: 0 14px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); box-sizing: border-box; }
+        .checkbox-wrapper { width: 30px; height: 30px; border: 2px solid #c1c1c1; border-radius: 2px; background-color: #fff; cursor: pointer; display: flex; justify-content: center; align-items: center; position: relative; }
+        .check-mark-final { display: none; width: 28px; height: 28px; stroke: var(--mood-color); stroke-width: 4; fill: none; stroke-linecap: round; stroke-linejoin: round; position: absolute; }
+        .loading-spinner { display: none; width: 22px; height: 22px; border: 3px solid rgba(163, 107, 94, 0.2); border-top: 3px solid var(--mood-color); border-radius: 50%; animation: spin 1s linear infinite; position: absolute; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .captcha-text { margin-left: 14px; font-size: 15px; color: var(--text-color); flex-grow: 1; user-select: none; }
+        .captcha-info { display: flex; flex-direction: column; align-items: center; font-size: 9px; color: var(--mood-color); text-align: center; width: 65px; }
+        .brain-icon { width: 34px; height: 34px; margin-bottom: 2px; fill: var(--mood-color); }
+        .checkbox-wrapper.active { border-color: transparent; background-color: transparent; }
+    </style>
+</head>
+<body id="body">
+
+    <div class="airport-header" id="header">
+        <div class="dept">MNEMO AIRLINES / GATE : MEMORY</div>
+        <div class="time" id="clock">DEPARTURE TIME: --:--:--</div>
+    </div>
+
+    <div class="main-wrapper" id="mainWrapper">
+        <div class="custom-card">
+            <div class="window-panel">
+                <div class="window-frame" id="windowFrame">
+                    <img src="main_rain.jpg" id="targetImg" class="bottle-image">
+                </div>
+            </div>
+            <div class="check-in-panel">
+                <div class="boarding-pass-title">BOARDING PASS: STEP 01-02</div>
+                <h1 class="main-instruction">Restore your destination.</h1>
+                <div class="input-group">
+                    <div class="input-label">SELECT SCENT FRAGMENTS [CHOOSE 1]</div>
+                    <div class="chip-container" id="scentGroup">
+                        <button class="chip">MISTY RAIN</button><button class="chip">OLD PAPER</button><button class="chip">WOODY DUST</button><button class="chip">SOAPY</button>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <div class="input-label">SELECT EMOTIONAL CLASS [CHOOSE 1]</div>
+                    <div class="chip-container" id="emotionGroup">
+                        <button class="chip">우울한</button><button class="chip">기쁜</button><button class="chip">먼지낀</button><button class="chip">맑은</button>
+                    </div>
+                </div>
+                <button class="confirm-btn" id="boardingBtn" onclick="openSelectionPopup()">ISSUE TICKET</button>
+                <div class="status-msg" id="statusLine">WAITING FOR PASSENGER DATA...</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="selection-container">
+            <div class="selection-header">
+                <div class="header-title">기억의 단상</div>
+                <div class="header-desc">가장 선명하게 기억나는 <strong>단 하나의 이미지</strong>를 선택해 주세요.</div>
+            </div>
+            <div class="image-grid">
+                <div class="grid-item" onclick="selectOnlyOne(this)"><img src="rain_1.jpg"></div>
+                <div class="grid-item" onclick="selectOnlyOne(this)"><img src="rain_2.jpg"></div>
+                <div class="grid-item" onclick="selectOnlyOne(this)"><img src="rain_3.jpg"></div>
+                <div class="grid-item" onclick="selectOnlyOne(this)"><img src="rain_4.jpg"></div>
+                <div class="grid-item" onclick="selectOnlyOne(this)"><img src="rain_5.jpg"></div>
+                <div class="grid-item" onclick="selectOnlyOne(this)"><img src="rain_6.jpg"></div>
+                <div class="grid-item" onclick="selectOnlyOne(this)"><img src="rain_7.jpg"></div>
+                <div class="grid-item" onclick="selectOnlyOne(this)"><img src="rain_8.jpg"></div>
+                <div class="grid-item" onclick="selectOnlyOne(this)"><img src="rain_9.jpg"></div>
+            </div>
+            <div class="selection-footer">
+                <button class="popup-confirm-btn" onclick="finalConfirm()">확인</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="captcha-overlay" id="captchaOverlay">
+        <div class="captcha-box">
+            <div class="checkbox-wrapper" id="captchaWrapper" onclick="startCaptchaInteraction()">
+                <svg class="check-mark-final" id="finalCheck" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                <div class="loading-spinner" id="finalSpinner"></div>
+            </div>
+            <div class="captcha-text" id="finalStatus">제 기억이 맞습니다.</div>
+            <div class="captcha-info">
+                <svg class="brain-icon" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg"><path d="M435.2 192c-6.4 0-12.8.8-19.2 2.4-12.8-50.4-58.4-88.8-112.8-88.8-31.2 0-59.2 10.4-81.6 28-22.4-17.6-50.4-28-81.6-28-54.4 0-100 38.4-112.8 88.8-6.4-1.6-12.8-2.4-19.2-2.4C40.8 192 0 232.8 0 283.2S40.8 374.4 91.2 374.4c6.4 0 12.8-.8 19.2-2.4 12.8 50.4 58.4 88.8 112.8 88.8 31.2 0 59.2-10.4 81.6-28 22.4-17.6 50.4 28 81.6 28 54.4 0 100-38.4 112.8-88.8 6.4 1.6 12.8 2.4 19.2 2.4 50.4 0 91.2-40.8 91.2-91.2S485.6 192 435.2 192zM121.6 348c-1.6 0-3.2-.8-4.8-.8-1.6-.8-3.2-1.6-4.8-1.6-1.6-.8-3.2-1.6-4.8-1.6s-3.2-.8-4.8-.8c-1.6 0-3.2-.8-4.8-.8s-3.2 0-4.8 0c-35.2 0-64-28.8-64-64s28.8-64 64-64c1.6 0 3.2 0 4.8 0s3.2.8 4.8.8c1.6 0 3.2.8 4.8.8s3.2.8 4.8.8c1.6.8 3.2.8 4.8.8s3.2.8 4.8.8c1.6.8 3.2.8 4.8.8s3.2.8 4.8.8c12.8-38.4 48.8-65.6 91.2-65.6 22.4 0 43.2 8.8 60 23.2C226.4 170.4 200 198.4 200 232c0 33.6 26.4 61.6 61.6 76C243.2 322.4 222.4 331.2 200 331.2 157.6 331.2 121.6 304 121.6 265.6zM320 312c0-33.6-26.4-61.6-61.6-76C276.8 220.8 297.6 212 320 212c42.4 0 78.4 27.2 91.2 65.6.8 0 2.4-.8 3.2-.8.8 0 2.4-.8 3.2-.8.8 0 2.4-.8 3.2-.8s2.4-.8 3.2-.8c.8-.8 2.4-.8 3.2-.8s2.4-.8 3.2-.8c.8-.8 2.4-.8 3.2-.8s2.4-.8 3.2-.8c1.6-.8 3.2-.8 4.8-.8 1.6-.8 3.2-.8 4.8-.8 35.2 0 64 28.8 64 64s-28.8 64-64 64c-1.6 0-3.2 0-4.8 0s-3.2-.8-4.8-.8c-1.6 0-3.2-.8-4.8-.8s-3.2-.8-4.8-.8c-1.6-.8-3.2-.8-4.8-.8s-3.2-.8-4.8-.8c-1.6-.8-3.2-.8-4.8-.8s-3.2-.8-4.8-.8c-12.8 38.4-48.8 65.6-91.2 65.6-22.4 0-43.2-8.8-60-23.2C301.6 373.6 320 345.6 320 312z"/></svg>
+                <div style="font-weight: bold; font-size: 10px;">MNEMO</div>
+                <div style="color: #999; font-size: 8px;">MEMORY DATA</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const body = document.getElementById('body');
+        const boardingBtn = document.getElementById('boardingBtn');
+        const modalOverlay = document.getElementById('modalOverlay');
+        const captchaOverlay = document.getElementById('captchaOverlay');
+        const mainWrapper = document.getElementById('mainWrapper');
+        const header = document.getElementById('header');
+        const targetImg = document.getElementById('targetImg');
+        const statusLine = document.getElementById('statusLine');
+        const chips = document.querySelectorAll('.chip');
+        
+        let hasScent = false; let hasEmotion = false;
+
+        chips.forEach(chip => {
+            chip.addEventListener('click', function() {
+                const siblings = this.parentElement.querySelectorAll('.chip');
+                siblings.forEach(s => s.classList.remove('active'));
+                this.classList.add('active');
+
+                if(this.parentElement.id === 'scentGroup') hasScent = true;
+                
+                if(this.parentElement.id === 'emotionGroup') {
+                    hasEmotion = true;
+                    if(this.innerText === '우울한') {
+                        body.classList.add('blue-mood');
+                    } else {
+                        body.classList.remove('blue-mood');
+                    }
+                }
+                updateAirportStatus();
+            });
+        });
+
+        function updateAirportStatus() {
+            let count = (hasScent ? 1 : 0) + (hasEmotion ? 1 : 0);
+            let blurValue = count === 2 ? 0 : (count === 1 ? 12 : 25);
+            if(count === 2) { 
+                statusLine.innerText = "READY TO BOARD."; 
+                statusLine.style.color = "var(--mood-color)";
+                boardingBtn.classList.add('active'); 
+            }
+            targetImg.style.filter = `blur(${blurValue}px)`;
+        }
+
+        function openSelectionPopup() { if(boardingBtn.classList.contains('active')) modalOverlay.classList.add('show'); }
+        
+        function selectOnlyOne(element) { 
+            const items = document.querySelectorAll('.grid-item'); 
+            items.forEach(item => item.classList.remove('selected')); 
+            element.classList.add('selected'); 
+        }
+
+        function finalConfirm() { const selectedItem = document.querySelector('.grid-item.selected'); if(selectedItem) { mainWrapper.classList.add('content-blur'); header.classList.add('content-blur'); modalOverlay.classList.add('content-blur'); captchaOverlay.style.display = 'flex'; } else { alert('이미지를 선택해 주세요.'); } }
+        function startCaptchaInteraction() { const wrapper = document.getElementById('captchaWrapper'); const check = document.getElementById('finalCheck'); const spinner = document.getElementById('finalSpinner'); const status = document.getElementById('finalStatus'); if(wrapper.classList.contains('active')) return; wrapper.classList.add('active'); check.style.display = 'block'; setTimeout(() => { check.style.display = 'none'; spinner.style.display = 'block'; status.innerText = "불러오는 중..."; setTimeout(() => { window.location.href = 'recording.html'; }, 2000); }, 500); }
+
+        setInterval(() => {
+            const now = new Date();
+            document.getElementById('clock').innerText = "DEPARTURE TIME: " + now.toLocaleTimeString();
+        }, 1000);
+    </script>
+</body>
+</html>

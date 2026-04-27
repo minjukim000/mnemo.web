@@ -3,12 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MNEMO | Memory Archive List</title>
+    <title>MNEMO | My Boarding Passes</title>
     <style>
         :root {
             --bg-color: #F5F1EA;
             --point-color: #A36B5E;
             --text-color: #2A2A2A;
+            --ticket-bg: #ffffff;
         }
 
         body, html {
@@ -21,78 +22,154 @@
         }
 
         .container {
-            max-width: 800px;
+            max-width: 600px;
             margin: 0 auto;
-            padding: 80px 20px;
+            padding: 60px 20px;
         }
 
         header {
             text-align: center;
-            margin-bottom: 80px;
+            margin-bottom: 60px;
         }
 
         header h1 {
-            font-size: 2.5rem;
-            letter-spacing: 10px;
-            margin-bottom: 10px;
+            font-size: 1.8rem;
+            letter-spacing: 8px;
+            margin-bottom: 15px;
+            font-weight: 400;
         }
 
         .back-home {
             text-decoration: none;
             color: var(--text-color);
-            font-size: 0.8rem;
+            font-size: 0.7rem;
             letter-spacing: 2px;
-            opacity: 0.5;
+            opacity: 0.4;
+            text-transform: uppercase;
         }
 
         .memory-list {
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            gap: 25px;
         }
 
-        /* [수정] 클릭 가능하도록 커서 및 효과 추가 */
-        .memory-item {
+        /* --- 항공권 스타일 UI --- */
+        .ticket-item {
             display: flex;
-            background: #fff;
-            padding: 20px;
-            gap: 30px;
-            box-shadow: 5px 5px 20px rgba(0,0,0,0.02);
-            align-items: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            animation: fadeIn 1s ease;
-        }
-
-        .memory-item:hover {
-            transform: translateX(10px);
-            box-shadow: 10px 10px 30px rgba(0,0,0,0.05);
-        }
-
-        .memory-thumb {
-            width: 80px;
-            height: 80px;
-            background: #fafafa;
+            flex-direction: column;
+            background: var(--ticket-bg);
+            border-radius: 15px;
             overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            position: relative;
+        }
+
+        .ticket-item:hover {
+            transform: translateY(-5px);
+        }
+
+        /* 티켓 상단: 메인 정보 */
+        .ticket-main {
+            padding: 25px;
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .ticket-thumb {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%; /* 비행기 창문 혹은 스탬프 느낌 */
+            overflow: hidden;
+            border: 2px solid var(--bg-color);
             flex-shrink: 0;
         }
 
-        .memory-thumb img { width: 100%; height: 100%; object-fit: cover; }
+        .ticket-thumb img { width: 100%; height: 100%; object-fit: cover; }
 
-        .memory-info { flex: 1; }
-        .memory-info .m-date { font-size: 0.7rem; color: var(--point-color); letter-spacing: 1px; }
-        .memory-info .m-title { font-size: 1.1rem; margin: 5px 0; letter-spacing: 1px; }
-        .memory-info .m-loc { font-size: 0.8rem; opacity: 0.5; }
+        .ticket-info { flex: 1; }
+        .ticket-info .t-route { 
+            font-size: 0.6rem; 
+            color: var(--point-color); 
+            letter-spacing: 2px;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .ticket-info .t-title { 
+            font-size: 1.2rem; 
+            margin: 0; 
+            letter-spacing: 1px;
+            font-weight: 500;
+        }
+        .ticket-info .t-loc { 
+            font-size: 0.75rem; 
+            opacity: 0.5; 
+            margin-top: 3px;
+        }
 
-        .empty-msg { text-align: center; opacity: 0.3; margin-top: 100px; }
+        /* 티켓 구분선 (절취선) */
+        .ticket-divider {
+            height: 1px;
+            border-top: 1px dashed #eee;
+            position: relative;
+            margin: 0 15px;
+        }
+
+        .ticket-divider::before, .ticket-divider::after {
+            content: '';
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            background: var(--bg-color);
+            border-radius: 50%;
+            top: -8px;
+        }
+        .ticket-divider::before { left: -23px; }
+        .ticket-divider::after { right: -23px; }
+
+        /* 티켓 하단: 바코드 및 상세 안내 */
+        .ticket-footer {
+            padding: 15px 25px;
+            background: #fafafa;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .t-date {
+            font-family: monospace;
+            font-size: 0.75rem;
+            letter-spacing: 1px;
+        }
+
+        .t-barcode {
+            width: 60px;
+            height: 20px;
+            background: repeating-linear-gradient(90deg, #000, #000 1px, transparent 1px, transparent 3px);
+            opacity: 0.2;
+        }
+
+        .empty-msg { text-align: center; opacity: 0.3; margin-top: 100px; font-size: 0.9rem; }
+        
+        /* 비행기 아이콘 애니메이션용 */
+        .airplane-icon {
+            position: absolute;
+            right: 25px;
+            top: 25px;
+            font-size: 1.2rem;
+            opacity: 0.1;
+        }
     </style>
 </head>
 <body>
 
     <div class="container">
         <header>
-            <h1>MY MEMORIES</h1>
-            <a href="index.html" class="back-home">← BACK TO HOME</a>
+            <h1>ARCHIVE LIST</h1>
+            <a href="index.html" class="back-home">← Terminate Session</a>
         </header>
 
         <div id="archiveList" class="memory-list"></div>
@@ -109,26 +186,35 @@
             const image = localStorage.getItem('memoryImage');
 
             if (!date && !title) {
-                listContainer.innerHTML = '<p class="empty-msg">아직 기록된 기억이 없습니다.</p>';
+                listContainer.innerHTML = '<p class="empty-msg">No boarding passes issued yet.</p>';
             } else {
                 const item = document.createElement('div');
-                item.className = 'memory-item';
+                item.className = 'ticket-item';
                 
-                // [수정] 클릭 시 다시 result.html로 이동하는 함수 연결
+                // 클릭 시 다시 result.html로 이동
                 item.onclick = function() {
                     window.location.href = "result.html";
                 };
 
                 item.innerHTML = `
-                    <div class="memory-thumb">
-                        <img src="${image || ''}" alt="">
+                    <div class="airplane-icon">✈</div>
+                    <div class="ticket-main">
+                        <div class="ticket-thumb">
+                            <img src="${image || ''}" alt="">
+                        </div>
+                        <div class="ticket-info">
+                            <div class="t-route">MEMORY → ARCHIVE</div>
+                            <h2 class="t-title">${title}</h2>
+                            <div class="t-loc">${loc}</div>
+                        </div>
                     </div>
-                    <div class="memory-info">
-                        <div class="m-date">${date}</div>
-                        <div class="m-title">${title}</div>
-                        <div class="m-loc">${loc}</div>
+                    
+                    <div class="ticket-divider"></div>
+                    
+                    <div class="ticket-footer">
+                        <div class="t-date">DATE: ${date}</div>
+                        <div class="t-barcode"></div>
                     </div>
-                    <div style="opacity: 0.2; font-size: 0.8rem;">VIEW DETAILS →</div>
                 `;
                 listContainer.appendChild(item);
             }

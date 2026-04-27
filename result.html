@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MNEMO | My Archived Memory</title>
+    <title>MNEMO | Memory Travel Ticket</title>
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <style>
         :root {
             --bg-color: #F5F1EA; 
@@ -14,124 +15,246 @@
 
         body, html {
             margin: 0; padding: 0;
-            width: 100%; height: 100%;
+            width: 100%; min-height: 100vh;
             background-color: var(--bg-color);
             color: var(--text-color);
             font-family: 'Playfair Display', 'Noto Serif KR', serif;
-            display: flex; justify-content: center; align-items: center;
-            background-image: 
-                linear-gradient(rgba(245, 241, 234, 0.8), rgba(245, 241, 234, 0.8)),
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            background-image: linear-gradient(rgba(245, 241, 234, 0.8), rgba(245, 241, 234, 0.8)),
                 url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.15'/%3E%3C/svg%3E");
         }
 
-        .saved-report {
-            width: 90%;
-            max-width: 500px;
-            background: #fff;
-            padding: 60px;
-            box-shadow: 15px 15px 50px rgba(0,0,0,0.05);
-            text-align: center;
-            animation: fadeIn 1.5s ease;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='paper'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.04' numOctaves='5' stitchTiles='stitch'/%3E%3CfeDiffuseLighting in='noise' lighting-color='white' surfaceScale='1'%3E%3CfeDistantLight azimuth='45' elevation='60'/%3E%3C/feDiffuseLighting%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23paper)' opacity='0.03'/%3E%3C/svg%3E");
+        /* [추가] 홈 버튼 스타일 */
+        .home-nav {
+            position: fixed;
+            top: 40px;
+            left: 40px;
+            z-index: 100;
         }
 
-        @keyframes fadeIn { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
-
-        .archive-seal {
-            font-size: 0.65rem;
+        .home-nav a {
+            text-decoration: none;
+            color: var(--text-color);
+            font-size: 0.8rem;
             letter-spacing: 3px;
-            color: var(--point-color);
-            border: 1px solid var(--point-color);
-            display: inline-block;
-            padding: 5px 15px;
-            margin-bottom: 40px;
+            font-weight: 600;
+            opacity: 0.5;
+            transition: opacity 0.3s ease;
         }
 
-        .saved-image-container {
-            width: 280px;
-            height: 280px;
-            margin: 0 auto 40px;
-            border: 1px solid var(--line-color);
-            background: #fafafa;
+        .home-nav a:hover {
+            opacity: 1;
+        }
+
+        /* 티켓 메인 컨테이너 */
+        .capture-area {
+            width: 350px;
+            height: 680px;
+            background: #fff;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+            border-radius: 10px;
             overflow: hidden;
         }
 
-        .saved-image-container img { width: 100%; height: 100%; object-fit: cover; }
+        /* 티켓 상단 (이미지 영역) */
+        .ticket-top {
+            padding: 30px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
 
-        .info-display {
-            border-top: 1px double var(--line-color);
-            border-bottom: 1px double var(--line-color);
-            padding: 30px 0;
-            margin-bottom: 30px;
+        .ticket-header {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.6rem;
+            letter-spacing: 2px;
+            margin-bottom: 25px;
+            color: var(--point-color);
+            font-weight: bold;
+        }
+
+        .image-frame {
+            width: 100%;
+            aspect-ratio: 1/1;
+            background: #fafafa;
+            border: 1px solid #eee;
+            overflow: hidden;
+            margin-bottom: 25px;
+        }
+
+        .image-frame img { width: 100%; height: 100%; object-fit: cover; }
+
+        .ticket-title-area {
+            text-align: left;
+            width: 100%;
+        }
+
+        .ticket-title-area h2 {
+            font-size: 1.5rem;
+            margin: 0;
+            letter-spacing: 1px;
+            font-weight: 400;
+        }
+
+        /* 티켓 절취선 및 홈(Notch) */
+        .ticket-divider {
+            position: relative;
+            width: 100%;
+            height: 20px;
+            display: flex;
+            align-items: center;
+        }
+
+        .ticket-divider::before, .ticket-divider::after {
+            content: '';
+            position: absolute;
+            width: 24px;
+            height: 24px;
+            background-color: var(--bg-color);
+            border-radius: 50%;
+            top: 50%;
+            transform: translateY(-50%);
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
+        }
+
+        .ticket-divider::before { left: -12px; }
+        .ticket-divider::after { right: -12px; }
+
+        .dashed-line {
+            width: 100%;
+            height: 1px;
+            border-top: 2px dashed #eee;
+        }
+
+        /* 티켓 하단 (정보 영역) */
+        .ticket-bottom {
+            padding: 30px;
+            background-color: #fff;
             font-family: 'Courier New', Courier, monospace;
         }
 
-        .info-row { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 0.85rem; }
-        .info-label { color: var(--point-color); font-weight: bold; }
-        .info-value { text-align: right; border-bottom: 1px solid #eee; flex: 1; margin-left: 20px; }
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            text-align: left;
+        }
 
-        .action-btns { display: flex; gap: 10px; margin-bottom: 10px; }
-        .btn { flex: 1; padding: 15px; font-size: 0.7rem; letter-spacing: 2px; cursor: pointer; border: 1px solid var(--text-color); text-decoration: none; color: var(--text-color); background: transparent; transition: 0.3s; display: flex; align-items: center; justify-content: center; }
-        .btn-dark { background: var(--text-color); color: #fff; }
-        .btn:hover { opacity: 0.7; letter-spacing: 4px; }
-
-        /* [추가] 주문하기 버튼 스타일 */
-        .order-btn-full {
-            width: 100%;
-            padding: 18px;
-            background-color: transparent;
+        .info-item label {
+            display: block;
+            font-size: 0.55rem;
             color: var(--point-color);
-            border: 1px solid var(--point-color);
-            font-family: 'Noto Serif KR', serif;
+            margin-bottom: 5px;
+            letter-spacing: 1px;
+        }
+
+        .info-item span {
             font-size: 0.8rem;
-            letter-spacing: 4px;
-            cursor: pointer;
-            transition: all 0.4s ease;
-            margin-top: 5px;
+            display: block;
+            border-bottom: 1px solid #f0f0f0;
+            padding-bottom: 5px;
         }
 
-        .order-btn-full:hover {
-            background-color: var(--point-color);
-            color: #fff;
-            letter-spacing: 7px;
+        .ticket-footer {
+            margin-top: 35px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
-        .barcode { width: 100px; height: 30px; margin: 30px auto 0; opacity: 0.4; background: repeating-linear-gradient(90deg, #000, #000 1px, transparent 1px, transparent 4px); }
+        .barcode-area {
+            width: 100%;
+            height: 40px;
+            background: repeating-linear-gradient(90deg, #000, #000 1px, transparent 1px, transparent 4px);
+            opacity: 0.7;
+            margin-bottom: 10px;
+        }
+
+        .uuid { font-size: 0.5rem; opacity: 0.3; letter-spacing: 1px; }
+
+        /* 외부 컨트롤 버튼 */
+        .controls {
+            margin-top: 30px;
+            display: flex;
+            gap: 10px;
+            width: 350px;
+        }
+
+        .btn {
+            flex: 1; padding: 15px; font-size: 0.7rem; letter-spacing: 2px;
+            cursor: pointer; border: 1px solid var(--text-color);
+            background: #fff; color: var(--text-color); transition: 0.3s;
+            text-decoration: none; text-align: center;
+        }
+
+        .btn-dark { background: var(--text-color); color: #fff; }
+        .btn:hover { opacity: 0.7; letter-spacing: 3px; }
+
     </style>
 </head>
 <body>
 
-    <div class="saved-report">
-        <div class="archive-seal">OFFICIAL MEMORY REGISTERED</div>
-        
-        <div class="saved-image-container" id="displayImage"></div>
+    <nav class="home-nav">
+        <a href="index.html">← TERMINATE SESSION</a>
+    </nav>
 
-        <div class="info-display">
-            <div class="info-row">
-                <span class="info-label">DATE</span>
-                <span class="info-value" id="displayDate"></span>
+    <div class="capture-area" id="ticketArea">
+        <div class="ticket-top">
+            <div class="ticket-header">
+                <span>MEMOIRE VOYAGE</span>
+                <span>NO. 8802-0924</span>
             </div>
-            <div class="info-row">
-                <span class="info-label">LOCATION</span>
-                <span class="info-value" id="displayLoc"></span>
-            </div>
-            <div class="info-row">
-                <span class="info-label">TITLE</span>
-                <span class="info-value" id="displayTitle"></span>
+            
+            <div class="image-frame" id="displayImage">
+                </div>
+
+            <div class="ticket-title-area">
+                <h2 id="displayTitle">THE AFTERIMAGE</h2>
+                <p style="font-size: 0.6rem; opacity: 0.4; margin-top: 5px; letter-spacing: 1px;">FRAGRANCE ARCHIVE SERVICE</p>
             </div>
         </div>
 
-        <div class="action-btns">
-            <a href="index.html" class="btn">HOME</a>
-            <a href="memory.html" class="btn btn-dark">나의 기억</a>
+        <div class="ticket-divider">
+            <div class="dashed-line"></div>
         </div>
 
-        <button class="order-btn-full" onclick="alert('주문 페이지로 이동합니다. (준비 중인 기능입니다)')">
-            나의 향수 주문하기
-        </button>
+        <div class="ticket-bottom">
+            <div class="info-grid">
+                <div class="info-item">
+                    <label>BOARDING DATE</label>
+                    <span id="displayDate">2024. 00. 00</span>
+                </div>
+                <div class="info-item">
+                    <label>GATE (LOCATION)</label>
+                    <span id="displayLoc">UNKNOWN</span>
+                </div>
+                <div class="info-item">
+                    <label>CLASS</label>
+                    <span>PREMIUM MEMORY</span>
+                </div>
+                <div class="info-item">
+                    <label>SEAT</label>
+                    <span>A-105</span>
+                </div>
+            </div>
 
-        <div class="barcode"></div>
-        <p style="font-size: 0.6rem; opacity: 0.3; margin-top: 20px;">UUID: MN-ARCHIVE-8802-X</p>
+            <div class="ticket-footer">
+                <div class="barcode-area"></div>
+                <span class="uuid">MN-TRVL-V901-2024</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="controls">
+        <a href="memory.html" class="btn">나의 기억</a>
+        <button class="btn btn-dark" onclick="downloadTicket()">티켓 저장하기</button>
     </div>
 
     <script>
@@ -147,6 +270,21 @@
             if(image) {
                 document.getElementById('displayImage').innerHTML = `<img src="${image}" alt="Memory">`;
             }
+        }
+
+        function downloadTicket() {
+            const ticket = document.getElementById('ticketArea');
+            html2canvas(ticket, {
+                scale: 3,
+                backgroundColor: null, // 티켓 테두리 밖을 투명하게 처리
+                logging: false,
+                useCORS: true
+            }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = 'MNEMO_Ticket_' + Date.now() + '.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            });
         }
     </script>
 </body>
