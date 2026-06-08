@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MENEMO 상품 상세 페이지</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght=300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        /* 기본 스타일 초기화 */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Noto Sans KR', sans-serif;
+            color: #111;
+        }
+        body {
+            background-color: #fcfbfa;
+            color: #333;
+        }
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        /* 1. 공통 상단 헤더 및 내비게이션 바 (메인 페이지와 완벽 통일) */
+        header {
+            width: 100%;
+            border-bottom: 1px solid #e5e5e5;
+            position: sticky;
+            top: 0;
+            background: #fff;
+            z-index: 1000;
+        }
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 40px; /* 로고 높이 45px에 맞춰 최적화 */
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        /* ★ 로고 45px 적용 */
+        .logo {
+            display: flex;
+            align-items: center;
+            height: 45px;
+        }
+        .logo-img {
+            max-height: 45px;
+            width: auto;
+            object-fit: contain;
+            display: block;
+            transition: opacity 0.3s ease;
+        }
+        .logo a:hover .logo-img {
+            opacity: 0.75;
+        }
+
+        .search-container {
+            flex-grow: 0.4;
+            position: relative;
+        }
+        .search-container input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #e5e5e5;
+            background-color: #f9f9f9;
+            font-size: 13px;
+        }
+        .header-util {
+            display: flex;
+            gap: 20px;
+            font-size: 12px;
+            color: #555;
+        }
+        .nav-bar {
+            border-top: 1px solid #f0f0f0;
+        }
+        .nav-menu {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            padding: 12px 0;
+            list-style: none;
+            font-size: 13px;
+            font-weight: 500;
+        }
+        .nav-menu li a:hover {
+            text-decoration: underline;
+        }
+
+        /* 2. 브레드크럼 컨테이너 (여백 조정) */
+        .breadcrumb-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #e5e5e5;
+            padding: 15px 0;
+            background-color: #fcfbfa;
+        }
+        .breadcrumb {
+            font-size: 12px;
+            color: #777;
+        }
+        .breadcrumb span {
+            color: #333;
+            font-weight: bold;
+        }
+
+        /* ==========================================
+            상품 상세 페이지 메인 레이아웃 스타일
+           ========================================== */
+        .detail-container {
+            max-width: 1200px;
+            margin: 30px auto;
+            display: flex;
+            gap: 40px;
+            padding: 0 10px;
+        }
+        /* 왼쪽 썸네일 리스트 */
+        .thumbnail-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            width: 60px;
+        }
+        .thumb-item {
+            width: 60px;
+            height: 60px;
+            background-color: #eaeaea;
+            border: 1px solid #ddd;
+            cursor: pointer;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+        .thumb-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: filter 0.2s ease;
+        }
+        .thumb-item.active {
+            border: 1px solid #333;
+        }
+        .thumb-item.active img {
+            filter: brightness(0.7);
+        }
+
+        /* 중앙 메인 이미지 */
+        .main-image-wrapper {
+            flex: 1;
+            background-color: #eaeaea;
+            aspect-ratio: 1 / 1;
+            max-width: 600px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        .main-image-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        /* 오른쪽 구매 정보 옵션 영역 */
+        .order-panel {
+            width: 380px;
+            display: flex;
+            flex-direction: column;
+        }
+        .detail-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 5px;
+        }
+        .detail-title-eng {
+            font-family: 'Times New Roman', Georgia, serif;
+            font-size: 26px;
+            font-weight: bold;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+        }
+        .detail-price {
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .detail-title-kor {
+            font-size: 16px;
+            color: #333;
+            margin-bottom: 2px;
+            font-weight: 500;
+        }
+        .detail-category {
+            font-size: 12px;
+            color: #888;
+            margin-bottom: 30px;
+            letter-spacing: 0.5px;
+        }
+        /* 옵션 셀렉트 박스 및 입력 폼 */
+        .option-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 25px;
+        }
+        .option-table td {
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+            font-size: 13px;
+        }
+        .option-table td:first-child {
+            width: 70px;
+            color: #555;
+        }
+        .form-select, .form-input {
+            width: 100%;
+            padding: 8px 10px;
+            border: 1px solid #ccc;
+            background-color: #fff;
+            font-size: 13px;
+            outline: none;
+        }
+        .label-input-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        .char-count {
+            position: absolute;
+            right: 10px;
+            font-size: 11px;
+            color: #aaa;
+        }
+        /* 장바구니 버튼 */
+        .btn-cart {
+            width: 100%;
+            padding: 16px;
+            background-color: #111;
+            color: #fff;
+            border: none;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-bottom: 25px;
+            transition: background-color 0.2s;
+            letter-spacing: 0.5px;
+        }
+        .btn-cart:hover {
+            background-color: #333;
+        }
+        /* 상품 간략 설명 및 하단 아코디언 메뉴 */
+        .detail-description {
+            font-size: 12px;
+            line-height: 1.7;
+            color: #555;
+            margin-bottom: 15px;
+            word-break: keep-all;
+        }
+        .more-link {
+            font-size: 11px;
+            color: #111;
+            text-decoration: underline;
+            cursor: pointer;
+            display: inline-block;
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
+
+        .more-description-content, .accordion-content {
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+            font-size: 12px;
+            line-height: 1.7;
+            color: #555;
+            background-color: #f5f4ef;
+            border-radius: 4px;
+            padding: 0 15px;
+            margin-bottom: 0;
+            border: 1px solid transparent;
+            transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1), 
+                        opacity 0.4s ease, 
+                        padding 0.5s ease, 
+                        margin 0.5s ease,
+                        border-color 0.4s ease;
+        }
+        
+        .more-description-content.show, .accordion-content.show {
+            max-height: 500px;
+            opacity: 1;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-color: #e6e4dc;
+        }
+
+        .accordion-item {
+            border-top: 1px solid #e5e5e5;
+            padding: 15px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+            color: #333;
+            cursor: pointer;
+        }
+        .accordion-item-wrapper {
+            border-bottom: 1px solid #e5e5e5;
+            margin-bottom: 30px;
+        }
+        .accordion-item-wrapper .accordion-item {
+            border-bottom: none;
+        }
+        .accordion-btn {
+            color: #888;
+            text-decoration: underline;
+            font-size: 11px;
+        }
+        .cs-info {
+            font-size: 11px;
+            color: #777;
+            line-height: 1.6;
+            text-align: right;
+            margin-top: auto;
+        }
+        .cs-info a {
+            color: #333;
+            text-decoration: none;
+        }
+        .notice-box {
+            margin-top: 20px;
+            font-size: 11px;
+            color: #666;
+            line-height: 1.6;
+            background-color: #fcfbfa;
+            padding-top: 10px;
+            border-top: 1px dashed #e5e5e5;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-top">
+            <!-- 로고 이미지 적용 -->
+            <div class="logo">
+                <a href="index.html">
+                    <img src="logo/logo_B.png" alt="MENEMO" class="logo-img">
+                </a>
+            </div>
+            <div class="search-container">
+                <input type="text" placeholder="검색">
+            </div>
+            <div class="header-util">
+                <a href="login.html">로그인 / 회원 가입</a>
+                <a href="cart.html">장바구니 (0)</a>
+            </div>
+        </div>
+        <nav class="nav-bar">
+            <ul class="nav-menu">
+                <li><a href="index.html">홈</a></li>
+                <li><a href="sell_main.html">상품</a></li>
+                <li><a href="menemo.html">므네모 소개</a></li>
+                <li><a href="custom_who.html">나만의 향수 만들기</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="breadcrumb-container">
+        <div class="breadcrumb">메인 / Déjà vu / <span>MISTY M</span></div>
+    </div>
+
+    <div class="detail-container">
+        <div class="thumbnail-list">
+            <div class="thumb-item active" onclick="changeMainImage(this, 'Goods_img/Ep_3.png')">
+                <img src="Goods_img/Ep_3.png" alt="미스티엠 이미지1" onerror="this.src='https://via.placeholder.com/60/eaeaea/999999?text=M1'">
+            </div>
+            <div class="thumb-item" onclick="changeMainImage(this, 'Goods_img/Ep_3_2.png')">
+                <img src="Goods_img/Ep_3_2.png" alt="미스티엠 이미지2" onerror="this.src='https://via.placeholder.com/60/eaeaea/999999?text=M2'">
+            </div>
+            <div class="thumb-item" onclick="changeMainImage(this, 'Goods_img/De_box.png')">
+                <img src="Goods_img/De_box.png" alt="미스티엠 이미지3" onerror="this.src='https://via.placeholder.com/60/eaeaea/999999?text=M3'">
+            </div>
+        </div>
+
+        <div style="flex: 1; max-width: 600px;">
+            <div class="main-image-wrapper">
+                <img id="main-product-img" src="Goods_img/Ep_3.png" alt="메인 상품 상세 이미지" onerror="this.src='https://via.placeholder.com/600/eaeaea/999999?text=MENEMO+PERFUME'">
+            </div>
+            <div class="notice-box">
+                <p>나의 퍼스널 라벨링 확인: <span style="text-decoration: underline; cursor:pointer;">라벨 플레이트 + 패키징 시안</span></p>
+                <p>*퍼스널 라벨링이 조각·인쇄된 커스텀 제품의 경우 단순 변심으로 인한 교환 및 환불이 불가능합니다.</p>
+                <p>*퍼스널 오더 라벨 플레이트에는 주문 완료일이 아닌 프리미엄 패킹 출고일 날짜가 공인 각인되어 발송됩니다.</p>
+                <p>*구매 시 별도의 라벨링 문구를 입력하지 않으실 경우, 브랜드 시그니처 기본 심볼 및 스페셜 코드명으로 대체 인쇄됩니다.</p>
+            </div>
+        </div>
+
+        <div class="order-panel">
+            <div class="detail-header">
+                <h1 class="detail-title-eng">Epiphany</h1>
+                <div class="detail-price" id="display-price">310,000 원</div>
+            </div>
+            <h2 class="detail-title-kor">02-C. 에피파니 룸 앤 패브릭 스프레이</h2>
+            <div class="detail-category">두번째 므네모 컬렉션 - 룸 앤 패브릭 스프레이</div>
+
+            <table class="option-table">
+                <tr>
+                    <td>용량:</td>
+                    <td>
+                        <select class="form-select" id="product-volume" onchange="calculateTotalPrice()">
+                            <option value="310000">50 ml</option>
+                            <option value="468000">100 ml</option>
+                            <option value="135000">15 ml (트래블 컬렉션)</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>수량:</td>
+                    <td>
+                        <select class="form-select" id="product-quantity" onchange="calculateTotalPrice()">
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>라벨링:</td>
+                    <td>
+                        <div class="label-input-container">
+                            <input type="text" class="form-input" placeholder="기억하고 싶은 문구를 입력하세요..." maxlength="18">
+                            <span class="char-count">18</span>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+
+            <button class="btn-cart">장바구니 담기</button>
+
+            <div class="detail-description">
+                미스티 엠(Misty M)은 안개 낀 새벽녘, 형태를 잃어버린 채 희미해진 기억의 가장 먼 가장자리를 향해 걸어 들어가는 감각을 선물합니다. 차갑고 신선한 에어리 노트로 시작하여 살결에 부드럽게 감싸 안착하는 깊은 자취를 직접 느껴보세요.
+            </div>
+            <div>
+                <span class="more-link" id="more-link-btn" onclick="toggleMoreDescription()">자세히 보기</span>
+            </div>
+
+            <div class="more-description-content" id="more-desc-content">
+                <strong>[ 향조 상세 정보 아카이브 ]</strong><br><br>
+                • <strong>Top Notes:</strong> 에어리 노트(Airy), 갈바눔(Galbanum), 민트 버베나<br>
+                • <strong>Heart Notes:</strong> 아이리스(Iris), 미모사, 웨트 에스프레소(Wet Espresso)<br>
+                • <strong>Base Notes:</strong> 화이트 머스크, 시더우드, 앰브록산(Ambroxan)<br><br>
+                므네모의 시그니처 향인 미스티 엠은 아이리스의 우아한 파우더리 향조 위에 정제된 쌉싸름한 에스프레소 노트가 교차하며, 누구도 쉽게 흉내 낼 수 없는 지적이고 차분한 향의 궤적을 완성합니다.
+            </div>
+
+            <div class="accordion-item-wrapper">
+                <div class="accordion-item" onclick="toggleIngredients()">
+                    <span>전성분 안내</span>
+                    <span class="accordion-btn" id="ingredients-btn">자세히 보기</span>
+                </div>
+                <div class="accordion-content" id="ingredients-content">
+                    변성알코올, 향료, 정제수, 갈바눔수지오일, 보랏빛아이리스추출물, 미모사추출물, 커피콩추출물, 부틸페닐메틸프로피오날, 리날룰, 리모넨, 시트랄, 시트로네롤, 제라니올, 알파-아이소메틸아이오논, 벤질살리실레이트, 쿠마린, 비에이치티(BHT)
+                </div>
+
+                <div class="accordion-item" onclick="toggleNotice()">
+                    <span>사용 시 주의사항 및 보관법</span>
+                    <span class="accordion-btn" id="notice-btn">자세히 보기</span>
+                </div>
+                <div class="accordion-content" id="notice-content">
+                    • <strong>사용 시 주의사항:</strong> 상처가 있는 부위, 습진 및 피부염 등의 이상이 있는 부위에는 사용을 자제해 주십시오. 사용 중 붉은 반점, 부어오름, 가려움증 등의 이상 증상이 있을 경우 전문의 등과 상담하시기 바랍니다.<br>
+                    • <strong>의류 사용 주의:</strong> 실크나 흰 옷, 가죽 제품에 직접 분사할 경우 변색이나 얼룩이 남을 수 있으므로 20~30cm 거리를 두고 분사하거나 안감 쪽에 테스트 후 사용해 주세요.<br>
+                    • <strong>보관 및 취급법:</strong> 사용 후에는 반드시 마개를 닫아두시고, 고온이나 저온의 장소 및 직사광선이 닿는 곳(자동차 안, 창가 등)을 피해 서늘한 그늘에 보관해 주십시오. 유소아의 손이 닿지 않는 곳에 보관하시기 바랍니다.
+                </div>
+
+                <div class="accordion-item" onclick="toggleDelivery()">
+                    <span>배송 및 시향 샘플 서비스 안내</span>
+                    <span class="accordion-btn" id="delivery-btn">자세히 보기</span>
+                </div>
+                <div class="accordion-content" id="delivery-content">
+                    • <strong>배송 안내:</strong> 본 상품은 프리미엄 퍼스널 패킹 공정을 거쳐 출고되는 오더 제품으로, 주문 완료 후 배송까지 영업일 기준 약 2~4일이 소요됩니다. (우체국택배 / 전 지역 무료배송)<br>
+                    • <strong>시향 샘플 서비스 (Try-It-First):</strong> 본품을 구매하시는 모든 분께 해당 향수의 2ml 트라이얼 샘플 동반 키트를 함께 보내드립니다. 포장 패키지를 개봉하시기 전, 동봉된 샘플을 먼저 시향해 보세요.<br>
+                    • <strong>교환 및 반품 조건:</strong> 퍼스널 라벨링 플레이트가 제작 완료되었거나 본품 박스의 포장 씰을 개봉한 경우에는 단순 변심으로 인한 교환 및 환불이 불가합니다. 향이 맞지 않으실 경우 본품을 개봉하지 않은 상태에서 샘플 수령 후 7일 이내에 반품을 요청해 주시기 바랍니다.
+                </div>
+            </div>
+
+            <div class="cs-info">
+                조율이나 안내가 필요하신가요? <a href="mailto:concierge@menemo.com">concierge@menemo.com</a><br>
+                <a href="tel:1544-1345" style="font-weight: bold; font-size: 13px;">1544-1345</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function changeMainImage(element, imagePath) {
+            const mainImg = document.getElementById('main-product-img');
+            mainImg.src = imagePath;
+            const thumbItems = document.querySelectorAll('.thumb-item');
+            thumbItems.forEach(item => { item.classList.remove('active'); });
+            element.classList.add('active');
+        }
+        function calculateTotalPrice() {
+            const volumeSelect = document.getElementById('product-volume');
+            const quantitySelect = document.getElementById('product-quantity');
+            const priceDisplay = document.getElementById('display-price');
+            const unitPrice = parseInt(volumeSelect.value);
+            const quantity = parseInt(quantitySelect.value);
+            const totalPrice = unitPrice * quantity;
+            priceDisplay.innerText = totalPrice.toLocaleString() + " 원";
+        }
+        function toggleMoreDescription() {
+            const descContent = document.getElementById('more-desc-content');
+            const linkBtn = document.getElementById('more-link-btn');
+            descContent.classList.toggle('show');
+            linkBtn.innerText = descContent.classList.contains('show') ? "상세 설명 접기" : "자세히 보기";
+        }
+        function toggleIngredients() {
+            const content = document.getElementById('ingredients-content');
+            const btn = document.getElementById('ingredients-btn');
+            content.classList.toggle('show');
+            btn.innerText = content.classList.contains('show') ? "상세 내용 접기" : "자세히 보기";
+        }
+        function toggleNotice() {
+            const content = document.getElementById('notice-content');
+            const btn = document.getElementById('notice-btn');
+            content.classList.toggle('show');
+            btn.innerText = content.classList.contains('show') ? "상세 내용 접기" : "자세히 보기";
+        }
+        function toggleDelivery() {
+            const content = document.getElementById('delivery-content');
+            const btn = document.getElementById('delivery-btn');
+            content.classList.toggle('show');
+            btn.innerText = content.classList.contains('show') ? "상세 내용 접기" : "자세히 보기";
+        }
+        window.onload = function() { calculateTotalPrice(); };
+    </script>
+</body>
+</html>

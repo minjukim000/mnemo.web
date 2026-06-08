@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MNEMO | Boutique Reservation</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --text-color: #333;
+            --accent-green: #96a08d;
+            --white: #ffffff;
+            --border-color: #dcd6cc;
+            --text-main: #2A2A2A;
+            --line: #e5e5e5;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: #ffffff;
+            color: var(--text-color);
+        }
+
+        /* ==========================================
+           1. 상단 쇼핑몰 스타일 헤더 & 내비게이션
+           ========================================== */
+        header {
+            width: 100%;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+            position: sticky;
+            top: 0;
+            background: #ffffff !important;
+            z-index: 1000;
+        }
+        
+        header .logo-nav, 
+        header .logo-nav a,
+        header .header-util a,
+        header .nav-menu li a {
+            color: var(--text-main) !important;
+            text-decoration: none;
+        }
+        
+        header .logo-nav a {
+            font-family: 'Playfair Display', serif;
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 40px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .logo-nav {
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: 2px;
+        }
+        .search-container {
+            flex-grow: 0.4;
+            position: relative;
+        }
+        .search-container input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid var(--line);
+            background-color: #f9f9f9;
+            font-size: 13px;
+            outline: none;
+            color: var(--text-main) !important;
+        }
+        .header-util {
+            display: flex;
+            gap: 20px;
+            font-size: 12px;
+        }
+        .header-util a:hover {
+            text-decoration: underline;
+        }
+
+        /* 내비게이션 메뉴 */
+        .nav-bar {
+            border-top: 1px solid rgba(0, 0, 0, 0.04);
+        }
+        .nav-menu {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            padding: 12px 0;
+            list-style: none;
+            font-size: 13px;
+            font-weight: 500;
+        }
+        .nav-menu li a {
+            letter-spacing: 1px;
+        }
+        .nav-menu li a:hover {
+            text-decoration: underline;
+        }
+
+        /* 브레드크럼 위치 경로 바 */
+        .content-status {
+            max-width: 1400px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 20px 40px 0 40px;
+            font-size: 12px;
+            color: #666;
+        }
+        .breadcrumb span {
+            margin: 0 5px;
+            color: #ccc;
+        }
+        .breadcrumb-link {
+            text-decoration: none;
+            color: inherit;
+        }
+        .breadcrumb-link:hover {
+            text-decoration: underline;
+            color: #111;
+        }
+
+        /* ==========================================
+           2. RESERVATION CONTENT SYSTEM
+           ========================================== */
+        .main-content-wrapper {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 60px 20px 100px 20px;
+        }
+
+        .reservation-container {
+            width: 100%;
+            max-width: 500px;
+            background: var(--white);
+            padding: 50px 40px;
+            border-radius: 4px;
+            border: 1px solid #eee;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.06);
+            text-align: center;
+            box-sizing: border-box;
+        }
+
+        .reservation-container .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: 6px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        .subtitle {
+            font-family: 'Playfair Display', serif;
+            font-size: 12px;
+            letter-spacing: 2px;
+            color: var(--accent-green);
+            margin-bottom: 40px;
+            text-transform: uppercase;
+        }
+
+        .form-group {
+            text-align: left;
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            font-size: 11px;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+            color: #888;
+            text-transform: uppercase;
+        }
+
+        select, input {
+            width: 100%;
+            padding: 12px 0;
+            border: none;
+            border-bottom: 1px solid var(--border-color);
+            font-family: 'Noto Sans KR', sans-serif;
+            font-size: 15px;
+            background: transparent;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        select:focus, input:focus {
+            border-bottom: 1px solid var(--accent-green);
+        }
+
+        .info-text {
+            font-size: 12px;
+            color: #999;
+            line-height: 1.6;
+            margin: 30px 0;
+            word-break: keep-all;
+        }
+
+        .btn-group {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-submit {
+            background-color: var(--text-main);
+            color: var(--white);
+            font-family: 'Noto Sans KR', sans-serif;
+        }
+
+        .btn-submit:hover {
+            background-color: var(--accent-green);
+            transform: translateY(-2px);
+        }
+
+        .btn-back {
+            background: transparent;
+            border: 1px solid #ddd;
+            color: #888;
+            font-size: 11px;
+            font-family: 'Playfair Display', serif;
+            text-transform: uppercase;
+        }
+
+        .btn-back:hover {
+            background: #f9f9f9;
+        }
+
+        #success-layer {
+            display: none;
+        }
+
+        .success-icon {
+            font-size: 50px;
+            color: var(--accent-green);
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 860px) {
+            .nav-menu { display: none; }
+            .header-top { padding: 15px 20px; }
+            .content-status { padding: 15px 20px 0 20px; }
+            .main-content-wrapper { padding-top: 40px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-top">
+            <div class="logo-nav"><a href="index.html">MNEMO</a></div>
+            <div class="search-container">
+                <input type="text" placeholder="검색">
+            </div>
+            <div class="header-util">
+                <a href="login.html">로그인 / 회원 가입</a>
+                <a href="cart.html">장바구니 (0)</a>
+            </div>
+        </div>
+        <nav class="nav-bar">
+            <ul class="nav-menu">
+                <li><a href="index.html">홈</a></li>
+                <li><a href="sell_main.html">상품</a></li>
+                <li><a href="menemo.html">므네모 소개</a></li>
+                <li><a href="custom_who.html">나만의 향수 만들기</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="content-status">
+        <div class="breadcrumb">
+            <a href="index.html" class="breadcrumb-link">메인</a> <span>/</span> 
+            <a href="custom_who.html" class="breadcrumb-link">나만의 향수 만들기</a> <span>/</span> 
+            <a href="recording.html" class="breadcrumb-link">발권</a> <span>/</span> 
+            매장 예약
+        </div>
+    </div>
+
+    <div class="main-content-wrapper">
+        
+        <div class="reservation-container" id="reservation-form">
+            <div class="logo">MNEMO</div>
+            <div class="subtitle">Boutique Reservation</div>
+
+            <form onsubmit="confirmReservation(event)">
+                <div class="form-group">
+                    <label>Select Boutique</label>
+                    <select required>
+                        <option value="" disabled selected>매장을 선택해주세요</option>
+                        <option value="seoul">MNEMO 서울 본점 (성수)</option>
+                        <option value="hannam">MNEMO 한남 아틀리에</option>
+                        <option value="busan">MNEMO 부산 신세계</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Reservation Date</label>
+                    <input type="date" required id="res-date">
+                </div>
+
+                <div class="form-group">
+                    <label>Your Name</label>
+                    <input type="text" placeholder="성함을 입력해주세요" required>
+                </div>
+
+                <div class="info-text">
+                    선택하신 날짜에 방문하시면 제작하신 무드보드를 바탕으로 한<br>
+                    <strong>나만의 기억 향수 샘플 시향</strong>을 도와드립니다.
+                </div>
+
+                <div class="btn-group">
+                    <button type="submit" class="btn btn-submit">예약하기</button>
+                    <button type="button" class="btn btn-back" onclick="location.href='recording.html'">Back to Ticket</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="reservation-container" id="success-layer">
+            <div class="logo">MNEMO</div>
+            <div class="success-icon">✓</div>
+            <h2 style="font-family: 'Playfair Display'; letter-spacing: 2px;">Reserved</h2>
+            <p class="info-text">
+                예약이 완료되었습니다.<br>
+                입력하신 연락처로 안내 문자가 발송됩니다.<br><br>
+                당신의 기억이 향기가 되는 순간을 기대해 주세요.
+            </p>
+            <button class="btn btn-submit" onclick="location.href='index.html'">Return Home</button>
+        </div>
+
+    </div>
+
+    <script>
+        const dateInput = document.getElementById('res-date');
+        const today = new Date().toISOString().split('T')[0];
+        dateInput.setAttribute('min', today);
+
+        function confirmReservation(e) {
+            e.preventDefault();
+            document.getElementById('reservation-form').style.display = 'none';
+            document.getElementById('success-layer').style.display = 'block';
+        }
+    </script>
+</body>
+</html>

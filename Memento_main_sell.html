@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LE LABO 스타일 쇼핑몰</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght=300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        /* 기본 스타일 초기화 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Noto Sans KR', sans-serif;
+            color: #111;
+        }
+        body {
+            background-color: #fff;
+        }
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        /* 1. 상단 헤더 및 내비게이션 */
+        header {
+            width: 100%;
+            border-bottom: 1px solid #e5e5e5;
+            position: sticky;
+            top: 0;
+            background: #fff;
+            z-index: 1000;
+        }
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 40px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        /* ★ 로고 이미지 45px 가이드 적용 및 호버 최적화 */
+        .logo {
+            display: flex;
+            align-items: center;
+            height: 45px; 
+        }
+        .logo-img {
+            max-height: 45px; 
+            width: auto;
+            object-fit: contain;
+            display: block;
+            transition: opacity 0.3s ease;
+        }
+        .logo a:hover .logo-img {
+            opacity: 0.75;
+        }
+        
+        .search-container {
+            flex-grow: 0.4;
+            position: relative;
+        }
+        .search-container input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #e5e5e5;
+            background-color: #f9f9f9;
+            font-size: 13px;
+        }
+        .header-util {
+            display: flex;
+            gap: 20px;
+            font-size: 12px;
+            color: #555;
+        }
+
+        /* 내비게이션 메뉴 */
+        .nav-bar {
+            border-top: 1px solid #f0f0f0;
+        }
+        .nav-menu {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            padding: 12px 0;
+            list-style: none;
+            font-size: 13px;
+            font-weight: 500;
+        }
+        .nav-menu li a:hover {
+            text-decoration: underline;
+        }
+
+        /* 2. 메인 배너 영역 */
+        .main-banner {
+            max-width: 1400px;
+            margin: 20px auto;
+            padding: 0 40px;
+        }
+        .banner-bg {
+            width: 100%;
+            height: 350px;
+            background-color: #2b2523; 
+            background-image: url('logo/ven_4.png'); 
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+        .banner-text {
+            text-align: center;
+            color: #fff;
+        }
+        .banner-text h2 {
+            font-size: 28px;
+            letter-spacing: 4px;
+            margin-bottom: 5px;
+            color: #fff;
+        }
+        .banner-text p {
+            font-size: 18px;
+            color: #fff;
+            font-weight: 300;
+        }
+
+        /* 3. 카테고리 정보 바 */
+        .content-status {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px 40px 10px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+            color: #666;
+        }
+        .breadcrumb span {
+            margin: 0 5px;
+            color: #ccc;
+        }
+        /* 브레드크럼 내부 링크용 마우스 오버 효과 스타일 추가 */
+        .breadcrumb-link:hover {
+            text-decoration: underline;
+            color: #111;
+        }
+
+        /* 4. 상품 리스트 나열 */
+        .product-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 40px 60px 40px;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+        .product-card {
+            background-color: #fff;
+            border: 1px solid #f0f0f0;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* 링크형 상품 카드 디자인 속성 정의 */
+        .product-link-card {
+            display: flex;
+            flex-direction: column;
+            cursor: pointer;
+            transition: border-color 0.2s ease;
+        }
+        .product-link-card:hover {
+            border-color: #b5b5b5; 
+        }
+
+        .product-img-box {
+            width: 100%;
+            height: 280px;
+            background-color: #f4f4f4; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+        .product-img-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            mix-blend-mode: multiply;
+        }
+        .product-info {
+            padding: 20px 15px;
+            background-color: #f9f9f9;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            border-top: 1px solid #eee;
+        }
+        .prod-name-en {
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            margin-bottom: 2px;
+        }
+        .prod-name-ko {
+            font-size: 13px;
+            color: #555;
+            margin-bottom: 12px;
+        }
+        .prod-size {
+            font-size: 11px;
+            color: #888;
+            margin-bottom: 15px;
+            line-height: 1.4;
+        }
+        .product-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: auto;
+            padding-top: 10px;
+        }
+        .btn-cart {
+            font-size: 12px;
+            font-weight: 500;
+            text-decoration: underline;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #333;
+        }
+        .btn-cart.disabled {
+            color: #999;
+            text-decoration: none;
+            cursor: not-allowed;
+        }
+        .prod-price {
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        /* 반응형 대응 */
+        @media (max-width: 1024px) {
+            .product-container { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 600px) {
+            .product-container { grid-template-columns: repeat(1, 1fr); }
+            .nav-menu { display: none; } 
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-top">
+            <div class="logo">
+                <a href="index.html">
+                    <img src="logo/logo_B.png" alt="MENEMO" class="logo-img">
+                </a>
+            </div>
+            <div class="search-container">
+                <input type="text" placeholder="검색">
+            </div>
+            <div class="header-util">
+                <a href="login.html">로그인 / 회원 가입</a>
+                <a href="cart.html">장바구니 (0)</a>
+            </div>
+        </div>
+        <nav class="nav-bar">
+            <ul class="nav-menu">
+                <li><a href="index.html">홈</a></li>
+                <li><a href="sell_main.html">상품</a></li>
+                <li><a href="menemo.html">므네모 소개</a></li>
+                <li><a href="custom_who.html">나만의 향수 만들기</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section class="main-banner">
+        <div class="banner-bg">
+            <div class="banner-text">
+                <h2>Memento</h2>
+                <p>메멘토</p>
+            </div>
+        </div>
+    </section>
+
+    <div class="content-status">
+        <div class="breadcrumb">
+            <a href="index.html" class="breadcrumb-link">메인</a> <span>/</span> <a href="sell_main.html" class="breadcrumb-link">상품</a> <span>/</span> Epiphany
+        </div>
+    </div>
+
+    <main class="product-container">
+        
+        <a href="Me_sell_1.html" class="product-card product-link-card">
+            <div class="product-img-box">
+                <img src="Goods_img/Me_1.png" alt="상탈 33 세트">
+            </div>
+            <div class="product-info">
+                <div>
+                    <div class="prod-name-en">02-A. 에피파니 오 드 퍼퓸 <br> (Epiphany Eau de Parfum)</div>
+                    <div class="prod-name-ko">Déjà vu - 데자뷔</div>
+                    <div class="prod-size">50 ml<br>오 드 퍼퓸</div>
+                </div>
+                <div class="product-footer">
+                    <button class="btn-cart" onclick="event.stopPropagation();">장바구니 담기</button>
+                    <div class="prod-price">181,000 원</div>
+                </div>
+            </div>
+        </a>
+
+        <a href="Me_sell_2.html" class="product-card product-link-card">
+            <div class="product-img-box">
+                <img src="Goods_img/Me_2.png" alt="상탈 33 50ml">
+            </div>
+            <div class="product-info">
+                <div>
+                    <div class="prod-name-en">02-B. 에피파니 퍼퓸드 핸드크림 <br>(Epiphany Perfumed Hand Cream)</div>
+                    <div class="prod-name-ko">Déjà vu - 데자뷔</div>
+                    <div class="prod-size">50 ml<br>오 드 퍼퓸</div>
+                </div>
+                <div class="product-footer">
+                    <button class="btn-cart" onclick="event.stopPropagation();">장바구니 담기</button>
+                    <div class="prod-price">310,000 원</div>
+                </div>
+            </div>
+        </a>
+
+    </main>
+
+</body>
+</html>

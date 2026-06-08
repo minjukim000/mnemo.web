@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MENEMO | 브랜드 소개</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Noto+Serif+KR:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        /* 기본 스타일 초기화 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Noto Sans KR', sans-serif;
+            color: #111;
+        }
+        body {
+            background-color: #fff;
+            overflow-x: hidden;
+        }
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        /* ==========================================
+           1. 상단 헤더 및 내비게이션 (로고 이미지 스타일 보정)
+           ========================================== */
+        header {
+            width: 100%;
+            border-bottom: 1px solid #e5e5e5;
+            position: sticky;
+            top: 0;
+            background: #fff;
+            z-index: 1000;
+        }
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 40px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        /* [스타일 일치] 이미지 로고 전용 레이아웃 스펙 */
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+        .logo a {
+            display: block;
+            height: 45px; /* 부모 컨테이너 높이 일치 */
+        }
+        .logo-img {
+            height: 45px;  /* 요구하신 세로 길이 45px 지정 */
+            width: auto;   /* 원본 가로 비율 자동 유지 */
+            display: block;
+        }
+
+        .search-container {
+            flex-grow: 0.4;
+            position: relative;
+        }
+        .search-container input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #e5e5e5;
+            background-color: #f9f9f9;
+            font-size: 13px;
+            outline: none;
+        }
+        .header-util {
+            display: flex;
+            gap: 20px;
+            font-size: 12px;
+            color: #555;
+        }
+        .header-util a:hover {
+            text-decoration: underline;
+        }
+
+        /* 내비게이션 메뉴 */
+        .nav-bar {
+            border-top: 1px solid #f0f0f0;
+        }
+        .nav-menu {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            padding: 12px 0;
+            list-style: none;
+            font-size: 13px;
+            font-weight: 500;
+        }
+        .nav-menu li a:hover {
+            text-decoration: underline;
+        }
+
+        /* 상단 위치 인덱스 타이틀 구역 */
+        .page-location-index {
+            max-width: 1400px;
+            margin: 30px auto 5px auto; 
+            padding: 0 40px;
+            text-align: left;
+        }
+        .page-location-index .sub-title {
+            font-size: 11px;
+            color: #777;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+        .page-location-index .sub-title a:hover,
+        .page-location-index .main-title a:hover {
+            text-decoration: underline;
+        }
+        .page-location-index .main-title {
+            font-size: 22px; 
+            font-weight: 700;
+            color: #111;
+            letter-spacing: -0.5px;
+            line-height: 1.2;
+            display: inline-block;
+        }
+
+        /* ==========================================
+            2. BRAND INTRO CONTENT SYSTEM
+           ========================================== */
+        .brand-story-wrapper {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 40px 100px 40px;
+            animation: pageFade 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes pageFade {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: none; }
+        }
+
+        /* 대형 인트로 비주얼 배너 */
+        .brand-hero-banner {
+            width: 100%;
+            height: 520px;
+            background: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.4)), url('custom_img/misty_m_4.jpg') center/cover;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: #fff;
+            padding: 20px;
+            margin-bottom: 80px;
+        }
+
+        .brand-hero-banner h2 {
+            font-family: 'Times New Roman', Georgia, serif;
+            font-size: 3.5rem;
+            font-weight: 400;
+            letter-spacing: 12px;
+            color: #fff;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+        }
+
+        .brand-hero-banner p {
+            font-family: 'Noto Serif KR', serif;
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.95);
+            letter-spacing: 2px;
+            font-weight: 300;
+            line-height: 1.8;
+        }
+
+        /* 브랜드 코어 에세이 섹션 */
+        .story-essay-section {
+            display: flex;
+            gap: 80px;
+            margin-bottom: 100px;
+            align-items: center;
+        }
+
+        .essay-text-block {
+            flex: 1;
+        }
+
+        .essay-text-block .essay-caption {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: #6B7E5F; /* 시그니처 카키 포인트 색상 */
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .essay-text-block h3 {
+            font-family: 'Noto Serif KR', serif;
+            font-size: 2rem;
+            font-weight: 400;
+            line-height: 1.5;
+            margin-bottom: 30px;
+            letter-spacing: -0.5px;
+        }
+
+        .essay-text-block p {
+            font-family: 'Noto Serif KR', serif;
+            font-size: 0.95rem;
+            color: #555;
+            line-height: 2;
+            font-weight: 300;
+            margin-bottom: 20px;
+        }
+
+        .essay-image-block {
+            flex: 1;
+            height: 550px;
+            background: url('https://images.unsplash.com/photo-1447752875215-b2761acb3c5d?auto=format&fit=crop&w=1000') center/cover;
+            border-radius: 2px;
+        }
+
+        /* 3대 브랜드 철학 (Core Philosophy) 그리드 */
+        .philosophy-section {
+            border-top: 1px solid #e5e5e5;
+            padding-top: 80px;
+            margin-bottom: 100px;
+        }
+
+        .section-header-title {
+            font-family: 'Times New Roman', Georgia, serif;
+            font-size: 1.8rem;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            margin-bottom: 50px;
+            text-align: center;
+        }
+
+        .philosophy-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 40px;
+        }
+
+        .philosophy-card {
+            background-color: #fbfbfb;
+            padding: 45px 35px;
+            border: 1px solid rgba(0,0,0,0.02);
+            transition: all 0.3s ease;
+        }
+
+        .philosophy-card:hover {
+            background-color: #fff;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.05);
+            transform: translateY(-4px);
+        }
+
+        .philosophy-card .num {
+            font-family: 'Times New Roman', Georgia, serif;
+            font-size: 1.5rem;
+            color: #6B7E5F;
+            font-weight: bold;
+            display: block;
+            margin-bottom: 20px;
+        }
+
+        .philosophy-card h4 {
+            font-family: 'Noto Serif KR', serif;
+            font-size: 1.25rem;
+            font-weight: 500;
+            margin-bottom: 15px;
+            letter-spacing: -0.5px;
+        }
+
+        .philosophy-card p {
+            font-size: 13.5px;
+            color: #666;
+            line-height: 1.8;
+            font-weight: 300;
+        }
+
+        /* 아카이브 컬렉션 하단 유도 슬로건 배너 */
+        .bottom-cta-banner {
+            width: 100%;
+            background-color: #111;
+            padding: 60px 40px;
+            text-align: center;
+            color: #fff;
+        }
+
+        .bottom-cta-banner h4 {
+            font-family: 'Playfair Display', serif;
+            color: #fff;
+            font-size: 1.5rem;
+            letter-spacing: 3px;
+            margin-bottom: 20px;
+            font-weight: 400;
+        }
+
+        .bottom-cta-btn {
+            display: inline-block;
+            padding: 12px 35px;
+            border: 1px solid #fff;
+            color: #fff;
+            font-size: 12px;
+            letter-spacing: 2px;
+            font-weight: 500;
+            text-transform: uppercase;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+
+        .bottom-cta-btn:hover {
+            background-color: #fff;
+            color: #111;
+        }
+
+        /* ==========================================
+            반응형 모바일 디자인 사양 대응
+           ========================================== */
+        @media (max-width: 1024px) {
+            .brand-hero-banner { height: 400px; margin-bottom: 60px; }
+            .brand-hero-banner h2 { font-size: 2.5rem; letter-spacing: 8px; }
+            .story-essay-section { flex-direction: column; gap: 40px; margin-bottom: 70px; }
+            .essay-image-block { width: 100%; height: 400px; }
+            .philosophy-grid { grid-template-columns: 1fr; gap: 20px; }
+            .brand-story-wrapper { padding: 40px 20px; }
+            .philosophy-section { padding-top: 50px; margin-bottom: 70px; }
+        }
+
+        @media (max-width: 600px) {
+            .nav-menu { display: none; } 
+            .brand-hero-banner h2 { font-size: 2rem; letter-spacing: 5px; }
+            .brand-hero-banner p { font-size: 0.95rem; line-height: 1.6; }
+            .essay-text-block h3 { font-size: 1.5rem; margin-bottom: 20px; }
+            .essay-text-block p { font-size: 0.9rem; line-height: 1.8; }
+            .page-location-index { padding: 0 20px; margin: 20px auto 0 auto; }
+            .page-location-index .main-title { font-size: 18px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-top">
+            <!-- [변경] 기존 텍스트 구역에서 이미지 로고 템플릿으로 전면 교체 -->
+            <div class="logo">
+                <a href="index.html">
+                    <img src="logo/logo_B.png" alt="MNEMO" class="logo-img">
+                </a>
+            </div>
+            <div class="search-container">
+                <input type="text" placeholder="검색">
+            </div>
+            <div class="header-util">
+                <a href="login.html">로그인 / 회원 가입</a>
+                <a href="cart.html">장바구니 (0)</a>
+            </div>
+        </div>
+        <nav class="nav-bar">
+            <ul class="nav-menu">
+                <li><a href="index.html">홈</a></li>
+                <li><a href="sell_main.html">상품</a></li>
+                <li><a href="menemo.html">므네모 소개</a></li>
+                <li><a href="custom_who.html">나만의 향수 만들기</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="page-location-index">
+        <div class="sub-title"><a href="index.html">메인</a></div>
+        <div class="main-title"><a href="about.html">므네모 소개</a></div>
+    </div>
+
+    <main class="brand-story-wrapper">
+        
+        <div class="brand-hero-banner">
+            <h2>Archive Your Scent</h2>
+            <p>기억은 사라지지 않습니다. 단지 향으로 남아있을 뿐.</p>
+        </div>
+
+        <section class="story-essay-section">
+            <div class="essay-text-block">
+                <p class="essay-caption">Our Philosophy</p>
+                <h3>잊혀가는 시간의 잔상을<br>향기 무드보드로 아카이빙하다.</h3>
+                <p>
+                    므네모(MNEMO)는 고대 그리스 신화 속 기억의 여신 '므네모시네'에서 영감을 받아 탄생한 파인 프래그런스 브랜드입니다. 우리는 단순한 향의 조합을 넘어, 무의식 속에 잠들어 있는 당신의 특별한 기억และ 그날의 정취를 온전한 액체 포뮬러로 복원하는 감각적 실험을 이어가고 있습니다.
+                </p>
+                <p>
+                    어느 새벽녘 차가운 도시 공기, 비에 젖은 오래된 도서관 책장의 서정적인 우디향, 혹은 희미해진 누군가의 잔상까지. 므네모가 설계한 향기 아카이브를 통해 당신의 가장 찬란했던 순간을 영원히 기록하고 소장해 보십시오.
+                </p>
+            </div>
+            <div class="essay-image-block"></div>
+        </section>
+
+        <section class="philosophy-section">
+            <h3 class="section-header-title">The Three Pillars</h3>
+            <div class="philosophy-grid">
+                
+                <div class="philosophy-card">
+                    <span class="num">01</span>
+                    <h4>기억의 복원 (Restoration)</h4>
+                    <p>므네모는 왜곡되고 흐려진 과거의 감정을 향으로 투명하게 정제합니다. 기억 속 가장 선명한 시각적 단상을 추출하여 고유한 스펙의 아카이브 라인업을 완성합니다.</p>
+                </div>
+
+                <div class="philosophy-card">
+                    <span class="num">02</span>
+                    <h4>비정형적 예술성 (Asymmetry)</h4>
+                    <p>정형화된 향수의 틀에서 벗어나 자연의 서늘한 기운과 정제되지 않은 질감을 투영합니다. 므네모의 향수들은 시간이 흐름에 따라 피부 위에서 개인 고유의 체취와 결합하여 비정형의 예술을 이룩합니다.</p>
+                </div>
+
+                <div class="philosophy-card">
+                    <span class="num">03</span>
+                    <h4>개인적 아카이빙 (Customization)</h4>
+                    <p>간단한 가이드 테스트와 기록 프로세스를 통해 오직 당신만을 위한 커스텀 향수를 발권합니다. 당신이 머물렀던 날짜, 장소, 제목이 찍힌 티켓은 하나의 향기 아뜰리에가 됩니다.</p>
+                </div>
+
+            </div>
+        </section>
+
+        <div class="bottom-cta-banner">
+            <h4>Ready to archive your memory?</h4>
+            <a href="custom_who.html" class="bottom-cta-btn">나만의 향수 만들기</a>
+        </div>
+
+    </main>
+
+</body>
+</html>

@@ -3,289 +3,680 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MNEMO | Personal Archive Service</title>
+    <title>MNEMO | Ticket Departure</title>
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght=300;400;500;600&family=Noto+Serif+KR:wght=300;400;500;600&family=Playfair+Display:wght=500;700&family=Noto+Sans+KR:wght=300;400;500;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-color: #F5F1EA; 
-            --point-color: #A36B5E;
-            --text-color: #2A2A2A;
-            --line-color: rgba(0, 0, 0, 0.1);
+            --text-color: #333;
+            --ticket-bg: #ffffff;
+            --accent-khaki: #6B7E5F; 
+            --accent-brown: #A36B5E;
+            --text-main: #2A2A2A;
+            --text-sub: #888888;
+            --ticket-width: 1050px;
+            --line: #e5e5e5;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
         body, html {
-            margin: 0; padding: 0;
-            width: 100%; height: 100%;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            font-family: 'Playfair Display', 'Noto Serif KR', serif;
-            display: flex; justify-content: center; align-items: center;
-            background-image: 
-                linear-gradient(rgba(245, 241, 234, 0.8), rgba(245, 241, 234, 0.8)),
-                url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.15'/%3E%3C/svg%3E");
+            width: 100%;
+            height: 100%;
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: #ffffff;
         }
 
-        .archive-paper {
-            width: 90%;
-            max-width: 950px;
-            background: #fff;
-            padding: 70px;
-            box-shadow: 10px 10px 40px rgba(0,0,0,0.03);
-            position: relative;
+        /* ==========================================
+           1. 상단 쇼핑몰 스타일 헤더 & 내비게이션 (로고 스타일 통일)
+           ========================================== */
+        header {
+            width: 100%;
+            border-bottom: 1px solid var(--line);
+            position: sticky;
+            top: 0;
+            background: #ffffff !important;
+            z-index: 1000;
+        }
+        
+        header .logo, 
+        header .logo a,
+        header .header-util a,
+        header .nav-menu li a {
+            color: #111111 !important;
+        }
+
+        .header-top {
             display: flex;
-            gap: 60px;
-            animation: slideUp 1.2s ease;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='paper'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.04' numOctaves='5' stitchTiles='stitch'/%3E%3CfeDiffuseLighting in='noise' lighting-color='white' surfaceScale='1'%3E%3CfeDistantLight azimuth='45' elevation='60'/%3E%3C/feDiffuseLighting%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23paper)' opacity='0.03'/%3E%3C/svg%3E");
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 40px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        /* 이미지 로고 일관성 유지 */
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+        .logo a {
+            display: block;
+            height: 45px;
+        }
+        .logo-img {
+            height: 45px;  
+            width: auto;   
+            display: block;
         }
 
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
+        .search-container {
+            flex-grow: 0.4;
+            position: relative;
+        }
+        .search-container input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid var(--line);
+            background-color: #f9f9f9;
+            font-size: 13px;
+            font-family: 'Noto Sans KR', sans-serif;
+            color: #111111 !important;
+            outline: none;
+        }
+        .header-util {
+            display: flex;
+            gap: 20px;
+            font-size: 12px;
         }
 
-        .product-view {
-            flex: 1;
+        .nav-bar {
+            border-top: 1px solid #f0f0f0;
+        }
+        .nav-menu {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            padding: 12px 0;
+            list-style: none;
+            font-size: 13px;
+            font-weight: 500;
+        }
+        .nav-menu li a:hover {
+            text-decoration: underline;
+        }
+
+        /* 브레드크럼 위치 경로 바 */
+        .content-status {
+            max-width: 1400px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 20px 40px 0 40px;
+            font-size: 12px;
+            color: #666;
+        }
+        .breadcrumb span {
+            margin: 0 5px;
+            color: #ccc;
+        }
+        .breadcrumb-link {
+            text-decoration: none;
+            color: inherit;
+        }
+        .breadcrumb-link:hover {
+            text-decoration: underline;
+            color: #111;
+        }
+
+        /* ==========================================
+           2. TICKET CONTENT SYSTEM (3D FLIP)
+           ========================================== */
+        .page-wrapper {
+            width: 100vw;
             display: flex;
             flex-direction: column;
-            align-items: center; 
-            justify-content: center;
-            border-right: 1px solid var(--line-color);
-            padding-right: 60px;
+            align-items: center;
+            padding: 10px 20px 80px 20px;
+            box-sizing: border-box;
         }
 
-        .user-logo-container {
-            width: 300px;
-            margin-bottom: 50px;
+        .ticket-page-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            perspective: 2000px; 
+            width: 100%;
+            max-width: var(--ticket-width);
+            margin-top: 60px; 
+            animation: pageFade 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes pageFade {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: none; }
+        }
+
+        .ticket-container {
+            width: 100%;
+            height: 400px;
+            position: relative;
             cursor: pointer;
+            transform-style: preserve-3d;
+            transition: transform 0.9s cubic-bezier(0.34, 1.56, 0.64, 1);
+            margin-bottom: 15px; 
+        }
+        .ticket-container.is-flipped { transform: rotateY(180deg); }
+
+        .ticket-front, .ticket-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            background-color: var(--ticket-bg);
+            border-radius: 4px;
+            border: 1px solid #eee;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.06);
+            overflow: hidden;
         }
 
-        .image-preview-box {
-            width: 300px;
-            height: 300px;
-            border: 1px dashed var(--line-color);
-            background-color: rgba(255, 255, 255, 0.5);
+        /* [티켓 앞면] */
+        .ticket-front {
+            display: flex;
+            flex-direction: column;
+        }
+        .ticket-visual-container {
+            width: 100%;
+            height: 220px;
+            border-bottom: 1px solid #f0f0f0;
             display: flex;
             justify-content: center;
             align-items: center;
-            overflow: hidden;
-            transition: all 0.3s ease;
+        }
+        .ticket-art {
+            width: calc(100% - 20px);
+            height: calc(100% - 20px);
+            background-position: center;
+            background-size: cover;
+            border-radius: 2px;
+        }
+        .ticket-info {
+            padding: 35px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-grow: 1;
+        }
+        .info-date {
+            border-right: 1.5px solid #eee;
+            padding-right: 40px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        .info-date .month {
+            writing-mode: vertical-rl;
+            transform: rotate(180deg);
+            font-family: 'Playfair Display', serif;
+            font-size: 1.4rem;
+            letter-spacing: 3px;
+        }
+        .info-date .day {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+        .info-detail {
+            flex: 1;
+            padding: 0 60px;
+        }
+        .garden-name {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.6rem;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+        }
+        .detail-row {
+            display: flex;
+            gap: 60px;
+        }
+        .detail-item label {
+            display: block;
+            font-size: 0.65rem;
+            color: var(--text-sub);
+            margin-bottom: 6px;
+        }
+        .detail-item span {
+            font-size: 1.2rem;
+            font-weight: 700;
+            font-family: 'Playfair Display', serif;
+        }
+        .info-barcode {
+            padding-left: 40px;
+            border-left: 1px solid #eee;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 200px;
+        }
+        .barcode-bars {
+            width: 160px;
+            height: 55px;
+            background: repeating-linear-gradient(90deg, #000, #000 1px, transparent 1px, transparent 4px, #000 4px, #000 5px, transparent 5px, transparent 6px, #000 6px, #000 8px, transparent 8px, transparent 10px, #000 10px, #000 11px, transparent 11px, transparent 15px);
+        }
+        
+        /* [티켓 뒷면] */
+        .ticket-back {
+            transform: rotateY(180deg);
+            background-color: #1e1e1e; 
+            color: #ffffff;
+            border: none;
+            display: flex;
+            align-items: center;
+            padding: 40px;
+            gap: 45px;
         }
 
-        .image-preview-box img {
+        /* 좌측: 유저 업로드 기억 액자 */
+        .back-photo-frame {
+            width: 320px;
+            height: 320px;
+            background-color: #2a2a2a;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-shrink: 0;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        
+        .back-photo-frame img {
             width: 100%;
             height: 100%;
             object-fit: cover;
         }
 
-        .upload-text {
-            font-size: 0.8rem;
-            letter-spacing: 2px;
-            color: var(--point-color);
-            opacity: 0.6;
+        .back-no-photo {
+            font-size: 0.75rem;
+            color: #666;
+            letter-spacing: 1px;
             text-align: center;
-            line-height: 1.5;
+            font-family: monospace;
         }
 
-        .label-stamp {
-            border: 1px solid var(--text-color);
-            padding: 20px;
-            width: 100%;
-            text-align: left;
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 0.8rem;
-            line-height: 1.8;
-            box-sizing: border-box;
-            background: rgba(255, 255, 255, 0.3);
-        }
-
-        .form-view {
-            flex: 1.2;
+        /* 우측: 기억의 레시피 및 설명 텍스트 공간 */
+        .back-recipe-details {
+            flex-grow: 1;
             display: flex;
             flex-direction: column;
+            justify-content: center;
+            height: 100%;
+            border-left: 1px solid rgba(255, 255, 255, 0.1);
+            padding-left: 45px;
         }
 
-        .archive-header {
-            margin-bottom: 50px;
-        }
-
-        .archive-header h1 {
-            font-size: 2.8rem;
-            margin: 0;
-            letter-spacing: 5px;
-            font-weight: 400;
-        }
-
-        .archive-header p {
-            font-size: 0.85rem;
-            opacity: 0.4;
-            letter-spacing: 4px;
-            margin-top: 10px;
-        }
-
-        .input-section {
-            margin-bottom: 35px;
-        }
-
-        .input-section label {
-            display: block;
+        .recipe-tag {
+            font-family: 'Playfair Display', serif;
             font-size: 0.75rem;
-            letter-spacing: 2px;
-            margin-bottom: 12px;
-            color: var(--point-color);
-            font-weight: bold;
+            letter-spacing: 3px;
+            color: var(--accent-khaki);
+            margin-bottom: 10px;
+            text-transform: uppercase;
         }
 
-        .archive-input {
-            width: 100%;
-            border: none;
-            border-bottom: 1px solid var(--line-color);
-            padding: 10px 0;
-            font-family: inherit;
-            font-size: 1.1rem;
-            background: transparent;
-            outline: none;
-            transition: border-color 0.3s;
+        .recipe-title {
+            font-family: 'Noto Serif KR', serif;
+            font-size: 2rem;
+            font-weight: 400;
+            letter-spacing: 1px;
+            margin-bottom: 25px;
+            color: #ffffff;
         }
 
-        .archive-input:focus {
-            border-bottom-color: var(--text-color);
+        .recipe-meta-table {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            margin-bottom: 25px;
         }
 
-        .order-btn {
-            margin-top: auto;
-            background: #2a2a2a;
-            color: #fff;
-            border: none;
-            padding: 22px;
-            letter-spacing: 6px;
-            cursor: pointer;
-            transition: all 0.3s;
+        .meta-line {
+            display: flex;
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+        }
+
+        .meta-line .meta-label {
+            width: 110px;
+            color: #888888;
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+        }
+
+        .meta-line .meta-value {
+            color: #dddddd;
+            font-family: 'Noto Sans KR', sans-serif;
+            font-weight: 300;
+        }
+
+        .recipe-paragraph {
+            font-family: 'Noto Serif KR', serif;
             font-size: 0.9rem;
+            line-height: 1.7;
+            color: #b5b5b5;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            padding-top: 20px;
         }
 
-        .order-btn:hover {
-            background: var(--point-color);
-            letter-spacing: 10px;
+        /* ==========================================
+            UTIL BUTTONS AREA
+           ========================================== */
+        .ticket-flip-hint {
+            font-size: 12px;
+            color: #999999;
+            letter-spacing: 0.5px;
+            margin-bottom: 35px;
+            font-weight: 400;
+            user-select: none;
         }
 
-        .back-link {
-            position: fixed;
-            top: 40px; left: 40px;
-            text-decoration: none;
-            color: var(--text-color);
-            font-size: 0.7rem;
+        .info-message {
+            text-align: center;
+            color: #555;
+            font-size: 15px;
+            font-weight: 400;
+            letter-spacing: 0.5px;
+            line-height: 1.6;
+            margin-bottom: 25px;
+        }
+        .info-message strong {
+            color: var(--text-main);
+            font-weight: 700;
+        }
+
+        .ticket-buttons-area {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            align-items: center;
+            width: 100%;
+        }
+        .t-btn {
+            padding: 14px 45px;
+            border: none;
+            letter-spacing: 3px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            cursor: pointer;
+            border-radius: 4px;
+            width: 280px;
+            text-transform: uppercase;
+            transition: 0.3s;
+        }
+        
+        .reserve-trigger { 
+            background: var(--accent-khaki); 
+            color: #fff; 
+            font-family: 'Noto Sans KR', sans-serif;
             letter-spacing: 2px;
-            opacity: 0.5;
+        }
+        .reserve-trigger:hover { 
+            background: #56664D; 
+            transform: translateY(-2px); 
+        }
+        .save-trigger { background: var(--text-main); color: #fff; }
+        .save-trigger:hover { background: #000; transform: translateY(-2px); }
+
+        /* 반응형 대응 디자인 변경 */
+        @media (max-width: 1100px) {
+            :root { --ticket-width: 90%; }
+            .ticket-container { height: auto; min-height: 400px; }
+            .ticket-front { flex-direction: column; }
+            .ticket-info { flex-direction: column; gap: 30px; text-align: center; padding: 30px; }
+            .info-date { border-right: none; padding-right: 0; justify-content: center; }
+            .info-detail { padding: 0; }
+            .detail-row { justify-content: center; }
+            .info-barcode { border-left: none; padding-left: 0; }
+            
+            .ticket-back { flex-direction: column; height: auto; padding: 40px 20px; }
+            .back-recipe-details { border-left: none; padding-left: 0; padding-top: 30px; border-top: 1px solid rgba(255, 255, 255, 0.1); width: 100%; }
+        }
+        
+        @media (max-width: 860px) {
+            .nav-menu { display: none; }
+            .header-top { padding: 15px 20px; }
+            .content-status { padding: 15px 20px 0 20px; }
         }
     </style>
 </head>
 <body>
 
-    <a href="index.html" class="back-link">← RETURN TO EDIT</a>
-
-    <div class="archive-paper">
-        <div class="product-view">
-            <div class="user-logo-container" onclick="document.getElementById('fileInput').click();">
-                <input type="file" id="fileInput" accept="image/*" style="display: none;">
-                <div id="imagePreview" class="image-preview-box">
-                    <span class="upload-text">CLICK TO UPLOAD<br>YOUR MEMORY PHOTO</span>
-                </div>
+    <header>
+        <div class="header-top">
+            <div class="logo">
+                <a href="index.html">
+                    <img src="logo/logo_B.png" alt="MNEMO" class="logo-img">
+                </a>
             </div>
-            
-            <div class="label-stamp">
-                [ TYPE: MEMORY ARCHIVE ]<br>
-                [ CODE: MN-0924 ]<br>
-                [ STATUS: RECORDING ]<br>
-                -------------------------<br>
-                SCENT NOTES:<br>
-                - WOODY DUST<br>
-                - MISTY RAIN
+            <div class="search-container">
+                <input type="text" placeholder="검색">
+            </div>
+            <div class="header-util">
+                <a href="login.html">로그인 / 회원 가입</a>
+                <a href="cart.html">장바구니 (0)</a>
             </div>
         </div>
+        <nav class="nav-bar">
+            <ul class="nav-menu">
+                <li><a href="index.html">홈</a></li>
+                <li><a href="sell_main.html">상품</a></li>
+                <li><a href="menemo.html">므네모 소개</a></li>
+                <li><a href="custom_who.html">나만의 향수 만들기</a></li>
+            </ul>
+        </nav>
+    </header>
 
-        <div class="form-view">
-            <div class="archive-header">
-                <h1>RECORDING</h1>
-                <p>기억의 조각을 기록하십시오</p>
-            </div>
-
-            <div class="input-section">
-                <label>MEMORY DATE (날짜)</label>
-                <input type="text" id="inputDate" class="archive-input" placeholder="YYYY. MM. DD" maxlength="12">
-            </div>
-
-            <div class="input-section">
-                <label>MEMORY LOCATION (장소)</label>
-                <input type="text" id="inputLoc" class="archive-input" placeholder="어디에서의 기억인가요?">
-            </div>
-
-            <div class="input-section">
-                <label>MEMORY TITLE (제목)</label>
-                <input type="text" id="inputTitle" class="archive-input" placeholder="이 향의 이름을 지어주세요">
-            </div>
-
-            <button class="order-btn" onclick="validateArchive()">
-                COMPLETE ARCHIVING
-            </button>
+    <div class="content-status">
+        <div class="breadcrumb">
+            <a href="index.html" class="breadcrumb-link">메인</a> <span>/</span> <a href="custom_who.html" class="breadcrumb-link">나만의 향수 만들기</a> <span>/</span> 발권
         </div>
     </div>
 
+    <div class="page-wrapper">
+        <section class="ticket-page-container">
+            
+            <audio id="flip-sound" src="https://assets.mixkit.co/active_storage/sfx/1101/1101-preview.mp3" preload="auto"></audio>
+
+            <div class="ticket-container" id="main-ticket">
+                
+                <div class="ticket-front" id="ticket-capture">
+                    <div class="ticket-visual-container">
+                        <div class="ticket-art" id="target-image"></div>
+                    </div>
+                    <div class="ticket-info">
+                        <div class="info-date">
+                            <span class="month" id="target-month">DATE</span>
+                            <span class="day" id="target-day">00.00</span>
+                        </div>
+                        <div class="info-detail">
+                            <div class="garden-name" id="target-title">UNTITLED SCENT</div>
+                            <div class="detail-row">
+                                <div class="detail-item"><label>OPEN</label><span>08.AM</span></div>
+                                <div class="detail-item"><label>YEAR</label><span id="target-year">----</span></div>
+                            </div>
+                            <div class="address" id="target-loc" style="font-size: 0.7rem; color: #888; margin-top: 25px; text-transform: uppercase;">LOCATION DATA</div>
+                        </div>
+                        <div class="info-barcode">
+                            <div class="barcode-bars"></div>
+                            <div class="barcode-number" id="target-barcode-num" style="font-family:monospace; font-size:0.6rem; letter-spacing:4px; margin-top:4px;">0000 0000 0000</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="ticket-back" id="ticket-capture-back">
+                    <div class="back-photo-frame" id="user-photo-frame">
+                        <span class="back-no-photo">NO IMAGE</span>
+                    </div>
+                    
+                    <div class="back-recipe-details">
+                        <div class="recipe-tag">Memory Record</div>
+                        <div class="recipe-title" id="back-target-title">나만의 향수 기억</div>
+                        
+                        <div class="recipe-meta-table">
+                            <div class="meta-line">
+                                <div class="meta-label">DATE</div>
+                                <div class="meta-value" id="back-target-date">----. --. --</div>
+                            </div>
+                            <div class="meta-line">
+                                <div class="meta-label">LOCATION</div>
+                                <div class="meta-value" id="back-target-loc">기록된 장소가 없습니다.</div>
+                            </div>
+                        </div>
+                        
+                        <div class="recipe-paragraph">
+                            이 티켓은 당신이 소중히 간직해 온 순간의 공기와 감정을 담아 발권되었습니다. 
+                            선택하신 향의 조각들과 무드가 조화롭게 블렌딩되어, 향기를 맡는 순간 당신을 다시 그 시간, 그 공간 속으로 데려다줄 것입니다.
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="ticket-flip-hint">클릭하시면 뒷면이 나옵니다</div>
+
+            <div class="info-message">
+                기까운 므네모(MENEMO) 매장에 예약을 하시고 방문 하시면<br>
+                <strong>기억에 대한 샘플 향수 시향이 가능합니다.</strong>
+            </div>
+
+            <div class="ticket-buttons-area">
+                <button type="button" class="t-btn reserve-trigger" onclick="makeReservation()">예약하기</button>
+                <button type="button" class="t-btn save-trigger" id="save-btn" onclick="saveTicketPNG()">Save as PNG</button>
+            </div>
+        </section>
+    </div>
+
     <script>
-        const fileInput = document.getElementById('fileInput');
-        const imagePreview = document.getElementById('imagePreview');
-        const inputDate = document.getElementById('inputDate');
+        const ticketContainer = document.getElementById('main-ticket');
+        const flipSound = document.getElementById('flip-sound');
 
-        // [추가] 날짜 자동 포맷팅 로직 (YYYY. MM. DD)
-        inputDate.addEventListener('input', function(e) {
-            let value = e.target.value.replace(/[^0-9]/g, ''); // 숫자만 남기기
-            let formattedValue = '';
+        const engMonths = {
+            "01": "JAN", "02": "FEB", "03": "MAR", "04": "APR", 
+            "05": "MAY", "06": "JUNE", "07": "JULY", "08": "AUG", 
+            "09": "SEPT", "10": "OCT", "11": "NOV", "12": "DEC"
+        };
 
-            if (value.length > 0) {
-                // 년도 (4자리)
-                formattedValue += value.substr(0, 4);
-                if (value.length >= 5) {
-                    // 월 (2자리)
-                    formattedValue += '. ' + value.substr(4, 2);
-                }
-                if (value.length >= 7) {
-                    // 일 (2자리)
-                    formattedValue += '. ' + value.substr(6, 2);
+        window.onload = function() {
+            const selectedImg = localStorage.getItem('finalSelectedImage');
+            if (selectedImg) {
+                document.getElementById('target-image').style.backgroundImage = `url('${selectedImg}')`;
+            }
+
+            const userUploadedImg = localStorage.getItem('userUploadedImage');
+            const photoFrame = document.getElementById('user-photo-frame');
+            if (userUploadedImg && userUploadedImg.trim() !== "") {
+                photoFrame.innerHTML = `<img src="${userUploadedImg}" alt="My Memory Photo" crossOrigin="anonymous">`;
+            }
+
+            const savedDate = localStorage.getItem('memoryDate');
+            const savedLoc = localStorage.getItem('memoryLoc');
+            const savedTitle = localStorage.getItem('memoryTitle');
+
+            if (savedDate) {
+                const pureDigits = savedDate.replace(/[^0-9]/g, '');
+                
+                if (pureDigits.length === 8) {
+                    const yearStr = pureDigits.substring(0, 4);
+                    const monthStr = pureDigits.substring(4, 6);
+                    const dayStr = pureDigits.substring(6, 8);
+                    const convertedMonth = engMonths[monthStr] || "ARCHIVE";
+
+                    document.getElementById('target-month').innerText = convertedMonth;
+                    document.getElementById('target-day').innerText = `${monthStr}.${dayStr}`;
+                    document.getElementById('target-year').innerText = yearStr;
+                    document.getElementById('target-barcode-num').innerText = `${yearStr} ${monthStr}${dayStr} 0950`;
+
+                    document.getElementById('back-target-date').innerText = `${yearStr}. ${monthStr}. ${dayStr}`;
                 }
             }
-            e.target.value = formattedValue;
+
+            if (savedTitle) {
+                document.getElementById('target-title').innerText = savedTitle;
+                document.getElementById('back-target-title').innerText = savedTitle;
+            }
+            if (savedLoc) {
+                document.getElementById('target-loc').innerText = savedLoc;
+                document.getElementById('back-target-loc').innerText = savedLoc;
+            }
+        };
+
+        ticketContainer.addEventListener('click', function() {
+            flipSound.currentTime = 0;
+            flipSound.play().catch(e => console.log("Audio play deferred"));
+            this.classList.toggle('is-flipped');
         });
 
-        // 이미지 미리보기 로직
-        fileInput.addEventListener('change', function() {
-            const file = this.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    imagePreview.innerHTML = `<img src="${e.target.result}" alt="Uploaded Photo">`;
-                    imagePreview.style.borderStyle = "solid";
-                }
-                reader.readAsDataURL(file);
-            }
-        });
+        /* [수정] 3D 변형 요소를 정적 2D 노드로 디커플링하여 강제 렌더링 후 다운로드 처리 */
+        function saveTicketPNG() {
+            const saveBtn = document.getElementById('save-btn');
+            saveBtn.innerText = "SAVING...";
+            saveBtn.disabled = true;
 
-        function validateArchive() {
-            const date = document.getElementById('inputDate').value.trim();
-            const loc = document.getElementById('inputLoc').value.trim();
-            const title = document.getElementById('inputTitle').value.trim();
-            const image = document.querySelector('#imagePreview img')?.src;
+            const isFlipped = ticketContainer.classList.contains('is-flipped');
+            const targetNode = isFlipped ? document.getElementById('ticket-capture-back') : document.getElementById('ticket-capture');
+            const filename = isFlipped ? 'MNEMO-Ticket-Back.png' : 'MNEMO-Ticket-Front.png';
 
-            if (date === "" || loc === "" || title === "") {
-                alert("기억의 모든 조각(날짜, 장소, 제목)을 채워주세요.");
-            } else {
-                localStorage.setItem('memoryDate', date);
-                localStorage.setItem('memoryLoc', loc);
-                localStorage.setItem('memoryTitle', title);
-                if(image) localStorage.setItem('memoryImage', image);
+            // html2canvas 버그 가드: 일시적으로 타겟 요소를 preserve-3d 흐름에서 탈출시킴
+            const originalPosition = targetNode.style.position;
+            const originalTransform = targetNode.style.transform;
+            const originalBackface = targetNode.style.backfaceVisibility;
 
-                alert("당신의 기억이 아카이브에 안전하게 저장되었습니다.");
-                window.location.href = "result.html"; 
-            }
+            targetNode.style.position = "relative";
+            targetNode.style.transform = "none";
+            targetNode.style.backfaceVisibility = "visible";
+
+            // 이미지 소스가 온전히 로드된 상태에서 동기화 캡처 유도
+            setTimeout(() => {
+                html2canvas(targetNode, { 
+                    useCORS: true, 
+                    allowTaint: true,
+                    backgroundColor: "#ffffff", 
+                    scale: 2,
+                    logging: false
+                }).then(canvas => {
+                    // 스타일 원복
+                    targetNode.style.position = originalPosition;
+                    targetNode.style.transform = originalTransform;
+                    targetNode.style.backfaceVisibility = originalBackface;
+
+                    try {
+                        const link = document.createElement('a');
+                        link.download = filename;
+                        link.href = canvas.toDataURL('image/png');
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                    } catch(err) {
+                        console.error("발권 이미지 파일 변환 중 보안 오류 발생:", err);
+                        alert("이미지 처리 중 제한이 발생했습니다. 다시 시도해 주세요.");
+                    }
+
+                    saveBtn.innerText = "SAVE AS PNG";
+                    saveBtn.disabled = false;
+                });
+            }, 100);
+        }
+
+        function makeReservation() {
+            window.location.href = "Yhea.html";
         }
     </script>
-
 </body>
 </html>

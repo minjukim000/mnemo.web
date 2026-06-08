@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MNEMO | Shopping Cart</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght=500;700&family=Noto+Sans+KR:wght=300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --text-color: #333;
+            --accent-khaki: #6B7E5F; 
+            --accent-brown: #A36B5E;
+            --text-main: #2A2A2A;
+            --text-sub: #888888;
+            --line: #e5e5e5;
+            --bg-gray: #f9f9f9;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: #ffffff;
+            color: var(--text-main);
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        /* ==========================================
+           1. 상단 쇼핑몰 스타일 헤더 & 내비게이션 (로고 이미지 스타일 보정)
+           ========================================== */
+        header {
+            width: 100%;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+            position: sticky;
+            top: 0;
+            background: #ffffff !important;
+            z-index: 1000;
+        }
+        
+        header .logo, 
+        header .logo a,
+        header .header-util a,
+        header .nav-menu li a {
+            color: var(--text-main) !important;
+            font-family: 'Noto Sans KR', sans-serif;
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 40px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        /* [스타일 일치] 이미지 로고 전용 레이아웃 일관성 유지 */
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+        .logo a {
+            display: block;
+            height: 45px; /* 부모 요소를 이미지 높이에 동기화 */
+        }
+        .logo-img {
+            height: 45px;  /* 요구하신 세로 길이 45px 지정 */
+            width: auto;   /* 가로 비율 자동 유지 */
+            display: block;
+        }
+
+        .search-container {
+            flex-grow: 0.4;
+            position: relative;
+        }
+        .search-container input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid var(--line);
+            background-color: #f9f9f9;
+            font-size: 13px;
+            font-family: 'Noto Sans KR', sans-serif;
+            color: var(--text-main) !important;
+            outline: none;
+        }
+        .header-util {
+            display: flex;
+            gap: 20px;
+            font-size: 12px;
+        }
+        .header-util a:hover {
+            text-decoration: underline;
+        }
+
+        /* 내비게이션 메뉴 */
+        .nav-bar {
+            border-top: 1px solid rgba(0, 0, 0, 0.04);
+        }
+        .nav-menu {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            padding: 12px 0;
+            list-style: none;
+            font-size: 13px;
+            font-weight: 500;
+        }
+        .nav-menu li a {
+            text-decoration: none;
+            letter-spacing: 1px;
+        }
+        .nav-menu li a:hover {
+            text-decoration: underline;
+        }
+
+        /* 브레드크럼 위치 경로 바 */
+        .content-status {
+            max-width: 1400px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 20px 40px 0 40px;
+            font-size: 12px;
+            color: #666;
+        }
+        .breadcrumb span {
+            margin: 0 5px;
+            color: #ccc;
+        }
+        .breadcrumb-link {
+            text-decoration: none;
+            color: inherit;
+        }
+        .breadcrumb-link:hover {
+            text-decoration: underline;
+            color: #111;
+        }
+
+        /* ==========================================
+           2. CART LAYOUT SYSTEM (장바구니 메인 영역)
+           ========================================== */
+        .cart-wrapper {
+            max-width: 1400px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 40px;
+            animation: pageFade 1s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes pageFade {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: none; }
+        }
+
+        .cart-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            font-weight: 500;
+            letter-spacing: 3px;
+            margin-bottom: 40px;
+            text-transform: uppercase;
+            border-bottom: 2px solid var(--text-main);
+            padding-bottom: 15px;
+        }
+
+        .cart-container {
+            display: flex;
+            gap: 50px;
+            align-items: flex-start;
+        }
+
+        /* 장바구니 상품 리스트 테이블 영역 */
+        .cart-items-section {
+            flex: 1.8;
+        }
+
+        .cart-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        .cart-table th {
+            padding: 15px 10px;
+            border-bottom: 1px solid var(--text-main);
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            color: var(--text-sub);
+            text-transform: uppercase;
+        }
+
+        .cart-table td {
+            padding: 25px 10px;
+            border-bottom: 1px solid var(--line);
+            vertical-align: middle;
+        }
+
+        /* 상품 정보 서정적 레이아웃 */
+        .product-info-box {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .product-img {
+            width: 90px;
+            height: 110px;
+            background-color: var(--bg-gray);
+            background-size: cover;
+            background-position: center;
+            border: 1px solid rgba(0,0,0,0.03);
+            border-radius: 2px;
+        }
+
+        .product-details .p-brand {
+            font-family: 'Playfair Display', serif;
+            font-size: 0.75rem;
+            letter-spacing: 2px;
+            color: var(--accent-khaki);
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .product-details .p-name {
+            font-size: 1.05rem;
+            font-weight: 500;
+            margin-bottom: 6px;
+            letter-spacing: -0.3px;
+        }
+
+        .product-details .p-option {
+            font-size: 12px;
+            color: var(--text-sub);
+        }
+
+        /* 수량 조절 컴포넌트 */
+        .quantity-controller {
+            display: inline-flex;
+            align-items: center;
+            border: 1px solid var(--line);
+            border-radius: 2px;
+            background: #fff;
+        }
+
+        .qty-btn {
+            width: 32px;
+            height: 32px;
+            border: none;
+            background: none;
+            cursor: pointer;
+            font-size: 14px;
+            color: var(--text-main);
+            transition: background 0.2s;
+        }
+        .qty-btn:hover {
+            background-color: #f1f1f1;
+        }
+
+        .qty-number {
+            width: 35px;
+            text-align: center;
+            font-size: 13px;
+            font-weight: 500;
+            border: none;
+            outline: none;
+            pointer-events: none;
+        }
+
+        .price-text {
+            font-size: 1.05rem;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+
+        .delete-btn {
+            background: none;
+            border: none;
+            color: #999;
+            cursor: pointer;
+            font-size: 18px;
+            transition: color 0.2s;
+            padding: 5px;
+        }
+        .delete-btn:hover {
+            color: var(--text-main);
+        }
+
+        /* ==========================================
+           3. ORDER SUMMARY SIDEBAR (우측 정산 판넬)
+           ========================================== */
+        .cart-summary-section {
+            flex: 1;
+            background-color: var(--bg-gray);
+            padding: 35px;
+            border: 1px solid rgba(0,0,0,0.03);
+            border-radius: 4px;
+            position: sticky;
+            top: 140px;
+        }
+
+        .summary-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.3rem;
+            letter-spacing: 1px;
+            font-weight: 600;
+            margin-bottom: 25px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--text-main);
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+            font-size: 14px;
+            color: #555;
+        }
+
+        .summary-row.total-row {
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid var(--line);
+            color: var(--text-main);
+        }
+
+        .summary-row.total-row span:last-child {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        /* 정산 하단 버튼 그룹 */
+        .checkout-buttons-area {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 30px;
+            width: 100%;
+        }
+
+        .c-btn {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+        }
+
+        .order-trigger {
+            background: var(--accent-khaki);
+            color: #fff;
+        }
+        .order-trigger:hover {
+            background: #56664D;
+            transform: translateY(-2px);
+        }
+
+        .continue-trigger {
+            background: var(--text-main);
+            color: #fff;
+        }
+        .continue-trigger:hover {
+            background: #000;
+            transform: translateY(-2px);
+        }
+
+        /* 빈 장바구니 안내 상태 */
+        .empty-cart-message {
+            display: none;
+            text-align: center;
+            padding: 100px 0;
+            font-size: 15px;
+            color: var(--text-sub);
+            letter-spacing: 0.5px;
+        }
+
+        /* ==========================================
+           RESPONSIVE SYSTEM
+           ========================================== */
+        @media (max-width: 1100px) {
+            .cart-container {
+                flex-direction: column;
+                gap: 40px;
+            }
+            .cart-summary-section {
+                width: 100%;
+                position: static;
+            }
+        }
+
+        @media (max-width: 860px) {
+            .nav-menu { display: none; }
+            .header-top { padding: 15px 20px; }
+            .content-status { padding: 15px 20px 0 20px; }
+            .cart-wrapper { padding: 25px 20px; }
+            .cart-table th:nth-child(3), 
+            .cart-table td:nth-child(3) { display: none; } 
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-top">
+            <!-- [수정] MENEMO 텍스트 지우고 다른 페이지와 규격을 통일한 고정 높이 45px 이미지 로고 도입 -->
+            <div class="logo">
+                <a href="index.html">
+                    <img src="logo/logo_B.png" alt="MNEMO" class="logo-img">
+                </a>
+            </div>
+            <div class="search-container">
+                <input type="text" placeholder="검색">
+            </div>
+            <div class="header-util">
+                <a href="#">로그인 / 회원 가입</a>
+                <a href="cart.html">장바구니 (<span id="util-cart-count">2</span>)</a>
+            </div>
+        </div>
+        <div class="nav-bar">
+            <ul class="nav-menu">
+                <li><a href="index.html">홈</a></li>
+                <li><a href="sell_main.html">상품</a></li>
+                <li><a href="menemo.html">므네모 소개</a></li>
+                <li><a href="custom_who.html">나만의 향수 만들기</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <div class="content-status">
+        <div class="breadcrumb">
+            <a href="index.html" class="breadcrumb-link">메인</a> <span>/</span> 장바구니
+        </div>
+    </div>
+
+    <div class="cart-wrapper">
+        <h1 class="cart-title">Shopping Cart</h1>
+
+        <div class="empty-cart-message" id="empty-panel">
+            장바구니에 담긴 상품이 없습니다.
+        </div>
+
+        <div class="cart-container" id="cart-main-layout">
+            <div class="cart-items-section">
+                <table class="cart-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 55%;">Product Details</th>
+                            <th style="width: 20%; text-align: center;">Quantity</th>
+                            <th style="width: 20%; text-align: right;">Total Price</th>
+                            <th style="width: 5%;"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="cart-item-row" data-price="181000">
+                            <td>
+                                <div class="product-info-box">
+                                    <div class="product-img" style="background-image: url('Goods_img/book_2.png');"></div>
+                                    <div class="product-details">
+                                        <div class="p-brand">01-A. 미지의 고향</div>
+                                        <div class="p-name">상탈 33 오 드 퍼퓸 & 핸드 세트</div>
+                                        <div class="p-option">규격: 15 ml + 50 ml</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td style="text-align: center;">
+                                <div class="quantity-controller">
+                                    <button class="qty-btn" onclick="changeQty(this, -1)">-</button>
+                                    <input type="text" class="qty-number" value="1" readonly>
+                                    <button class="qty-btn" onclick="changeQty(this, 1)">+</button>
+                                </div>
+                            </td>
+                            <td style="text-align: right;">
+                                <span class="price-text font-sub">181,000 원</span>
+                            </td>
+                            <td style="text-align: right;">
+                                <button class="delete-btn" onclick="deleteItem(this)">&times;</button>
+                            </td>
+                        </tr>
+
+                        <tr class="cart-item-row" data-price="310000">
+                            <td>
+                                <div class="product-info-box">
+                                    <div class="product-img" style="background-image: url('Goods_img/rain1998_3.png');"></div>
+                                    <div class="product-details">
+                                        <div class="p-brand">01-B. 꿈의 잔상</div>
+                                        <div class="p-name">상탈 33 오 드 퍼퓸</div>
+                                        <div class="p-option">규격: 50 ml</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td style="text-align: center;">
+                                <div class="quantity-controller">
+                                    <button class="qty-btn" onclick="changeQty(this, -1)">-</button>
+                                    <input type="text" class="qty-number" value="1" readonly>
+                                    <button class="qty-btn" onclick="changeQty(this, 1)">+</button>
+                                </div>
+                            </td>
+                            <td style="text-align: right;">
+                                <span class="price-text font-sub">310,000 원</span>
+                            </td>
+                            <td style="text-align: right;">
+                                <button class="delete-btn" onclick="deleteItem(this)">&times;</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="cart-summary-section">
+                <h2 class="summary-title">Order Summary</h2>
+                
+                <div class="summary-row">
+                    <span>상품 합계 금액</span>
+                    <span id="subtotal-display">491,000 원</span>
+                </div>
+                <div class="summary-row">
+                    <span>배송비 (3,000원 / 50만원 이상 무료)</span>
+                    <span id="shipping-display">3,000 원</span>
+                </div>
+                
+                <div class="summary-row total-row">
+                    <span>최종 결제 금액</span>
+                    <span id="grandtotal-display">494,000 원</span>
+                </div>
+
+                <div class="checkout-buttons-area">
+                    <button type="button" class="c-btn order-trigger" onclick="proceedToCheckout()">주문하기</button>
+                    <button type="button" class="c-btn continue-trigger" onclick="location.href='sell_main.html'">쇼핑 계속하기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 수량 변경 함수
+        function changeQty(button, delta) {
+            const row = button.closest('.cart-item-row');
+            const qtyInput = row.querySelector('.qty-number');
+            let currentQty = parseInt(qtyInput.value);
+            
+            currentQty += delta;
+            if (currentQty < 1) currentQty = 1; // 최소 수량 1 제한
+            
+            qtyInput.value = currentQty;
+            
+            // 행 단일 항목 가격 갱신
+            const unitPrice = parseInt(row.getAttribute('data-price'));
+            const totalPrice = unitPrice * currentQty;
+            row.querySelector('.price-text').innerText = totalPrice.toLocaleString() + " 원";
+            
+            // 전체 금액 리계산
+            calculateTotalSummary();
+        }
+
+        // 아이템 삭제 함수
+        function deleteItem(button) {
+            const row = button.closest('.cart-item-row');
+            row.remove();
+            
+            // 전체 결제 사양 갱신 및 유틸 아이콘 카운트 업데이트
+            calculateTotalSummary();
+            updateHeaderCartCount();
+        }
+
+        // 헤더 유틸 장바구니 카운트 돔 업데이트
+        function updateHeaderCartCount() {
+            const remainingRows = document.querySelectorAll('.cart-item-row').length;
+            document.getElementById('util-cart-count').innerText = remainingRows;
+        }
+
+        // 장바구니 최종 금액 계산 로직 엔진
+        function calculateTotalSummary() {
+            const rows = document.querySelectorAll('.cart-item-row');
+            
+            // 상품이 전부 삭제되었을 경우의 예외 처리 레이아웃 스위칭
+            if (rows.length === 0) {
+                document.getElementById('cart-main-layout').style.display = 'none';
+                document.getElementById('empty-panel').style.display = 'block';
+                return;
+            }
+
+            let subtotal = 0;
+            rows.forEach(row => {
+                const price = parseInt(row.getAttribute('data-price'));
+                const qty = parseInt(row.querySelector('.qty-number').value);
+                subtotal += (price * qty);
+            });
+
+            // 500,000원 이상 구매 시 배송비 무료 분기 처리 조건식
+            let shipping = (subtotal >= 500000) ? 0 : 3000;
+            let grandTotal = subtotal + shipping;
+
+            // DOM 출력 갱신 바인딩
+            document.getElementById('subtotal-display').innerText = subtotal.toLocaleString() + " 원";
+            document.getElementById('shipping-display').innerText = shipping === 0 ? "무료 배송" : shipping.toLocaleString() + " 원";
+            document.getElementById('grandtotal-display').innerText = grandTotal.toLocaleString() + " 원";
+        }
+
+        // 주문 처리 가상 라우터 함수
+        function proceedToCheckout() {
+            alert("주문 결제 페이지로 이동합니다.");
+            // window.location.href = "checkout.html";
+        }
+
+        // 초기 페이지 진입 시 총 합산 금액 일차 정산 적용
+        window.addEventListener('DOMContentLoaded', () => {
+            calculateTotalSummary();
+        });
+    </script>
+</body>
+</html>

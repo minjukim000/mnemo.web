@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MENEMO 컬렉션</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght=300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        /* 기본 스타일 초기화 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Noto Sans KR', sans-serif;
+            color: #111;
+        }
+        body {
+            background-color: #fff;
+        }
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        /* 1. 상단 헤더 및 내비게이션 */
+        header {
+            width: 100%;
+            border-bottom: 1px solid #e5e5e5;
+            position: sticky;
+            top: 0;
+            background: #fff;
+            z-index: 1000;
+        }
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 40px; /* 45px 로고 높이에 최적화된 패딩 */
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        /* ★ 로고 45px 적용 */
+        .logo {
+            display: flex;
+            align-items: center;
+            height: 45px; 
+        }
+        .logo-img {
+            max-height: 45px; 
+            width: auto;
+            object-fit: contain;
+            display: block;
+            transition: opacity 0.3s ease;
+        }
+        .logo a:hover .logo-img {
+            opacity: 0.75;
+        }
+        
+        .search-container {
+            flex-grow: 0.4;
+            position: relative;
+        }
+        .search-container input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #e5e5e5;
+            background-color: #f9f9f9;
+            font-size: 13px;
+        }
+        .header-util {
+            display: flex;
+            gap: 20px;
+            font-size: 12px;
+            color: #555;
+        }
+
+        /* 내비게이션 메뉴 */
+        .nav-bar {
+            border-top: 1px solid #f0f0f0;
+        }
+        .nav-menu {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            padding: 12px 0;
+            list-style: none;
+            font-size: 13px;
+            font-weight: 500;
+        }
+        .nav-menu li a:hover {
+            text-decoration: underline;
+        }
+
+        /* 상단 위치 인덱스 타이틀 구역 (우측 버튼 배치를 위해 플렉스 박스 적용) */
+        .page-location-index {
+            max-width: 1400px;
+            margin: 30px auto 5px auto; 
+            padding: 0 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end; /* 아래 기둥선에 맞추어 정렬 */
+        }
+        .page-location-left {
+            text-align: left;
+        }
+        .page-location-index .sub-title {
+            font-size: 11px;
+            color: #777;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+        .page-location-index .sub-title a:hover,
+        .page-location-index .main-title a:hover {
+            text-decoration: underline;
+        }
+        .page-location-index .main-title {
+            font-size: 22px; 
+            font-weight: 700;
+            color: #111;
+            letter-spacing: -0.5px;
+            line-height: 1.2;
+            display: inline-block;
+        }
+
+        /* ★ 우측 전체상품 보기 텍스트 버튼 스타일 */
+        .view-all-products-btn {
+            font-size: 13px;
+            font-weight: 500;
+            color: #444;
+            letter-spacing: -0.3px;
+            transition: color 0.2s ease;
+        }
+        .view-all-products-btn:hover {
+            color: #111;
+            text-decoration: underline;
+        }
+
+        /* 컬렉션 배너 리스트 */
+        .collection-banner-section {
+            max-width: 1400px;
+            margin: 15px auto 60px auto; 
+            padding: 0 40px;
+            display: flex;
+            flex-direction: column;
+            gap: 25px; 
+        }
+        
+        .collection-banner {
+            width: 100%;
+            height: 480px; 
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            text-decoration: none;
+            overflow: hidden;
+        }
+
+        .banner-1 { background-image: url('logo/deza.jpg'); }
+        .banner-2 { background-image: url('logo/ven_3.png'); }
+        .banner-3 { background-image: url('logo/ven_4.png'); }
+
+        .collection-banner::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.25);
+            transition: background-color 0.4s ease;
+            z-index: 1;
+        }
+        
+        .collection-banner:hover::before {
+            background-color: rgba(0, 0, 0, 0.12);
+        }
+
+        .collection-banner-text {
+            text-align: center;
+            color: #fff;
+            z-index: 2;
+            transition: transform 0.4s ease;
+        }
+
+        .collection-banner:hover .collection-banner-text {
+            transform: scale(1.02); 
+        }
+
+        .collection-banner-text h2 {
+            font-family: 'Times New Roman', Georgia, serif;
+            font-size: 42px; 
+            font-weight: 500; 
+            letter-spacing: 5px; 
+            margin-bottom: 8px; 
+            color: #fff;
+            text-transform: uppercase;
+        }
+
+        .collection-banner-text p {
+            font-size: 15px;
+            color: rgba(255, 255, 255, 0.95);
+            font-weight: 300;
+            letter-spacing: 1px;
+        }
+
+        @media (max-width: 1024px) {
+            .collection-banner { height: 380px; }
+            .collection-banner-section, .page-location-index { padding: 0 20px; }
+            .collection-banner-text h2 { font-size: 34px; letter-spacing: 4px; }
+        }
+        @media (max-width: 600px) {
+            .nav-menu { display: none; } 
+            .collection-banner { height: 260px; }
+            .collection-banner-text h2 { font-size: 26px; letter-spacing: 3px; margin-bottom: 4px; }
+            .collection-banner-text p { font-size: 13px; }
+            .page-location-index { margin: 20px auto 0 auto; }
+            .page-location-index .main-title { font-size: 18px; } 
+            .view-all-products-btn { font-size: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-top">
+            <div class="logo">
+                <a href="index.html">
+                    <img src="logo/logo_B.png" alt="MENEMO 로고" class="logo-img">
+                </a>
+            </div>
+            <div class="search-container">
+                <input type="text" placeholder="검색">
+            </div>
+            <div class="header-util">
+                <a href="login.html">로그인 / 회원 가입</a>
+                <a href="cart.html">장바구니 (0)</a>
+            </div>
+        </div>
+        <nav class="nav-bar">
+            <ul class="nav-menu">
+                <li><a href="index.html">홈</a></li>
+                <li><a href="sell_main.html">상품</a></li>
+                <li><a href="menemo.html">므네모 소개</a></li>
+                <li><a href="custom_who.html">나만의 향수 만들기</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="page-location-index">
+        <div class="page-location-left">
+            <div class="sub-title"><a href="index.html">메인</a></div>
+            <div class="main-title"><a href="sell_main.html">상품</a></div>
+        </div>
+        <a href="sell.html" class="view-all-products-btn">전체상품 보기</a>
+    </div>
+
+    <section class="collection-banner-section">
+        <a href="Dezav.html" class="collection-banner banner-1">
+            <div class="collection-banner-text">
+                <h2>Déjà vu</h2>
+                <p>데자뷔</p>
+            </div>
+        </a>
+
+        <a href="Epiphany_main_sell.html" class="collection-banner banner-2">
+            <div class="collection-banner-text">
+                <h2>Epiphany</h2>
+                <p>찬란한 기억</p>
+            </div>
+        </a>
+
+        <a href="Memento_main_sell.html" class="collection-banner banner-3">
+            <div class="collection-banner-text">
+                <h2>Memento</h2>
+                <p>메멘토</p>
+            </div>
+        </a>
+    </section>
+
+</body>
+</html>

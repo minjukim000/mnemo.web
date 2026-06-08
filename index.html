@@ -1,330 +1,1247 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MNEMO | Archive & Eternal Ecosystem</title>
-    <style>
-        :root {
-            --bg-color: #F5F1EA;
-            --text-color: #2A2A2A;
-            --point-color: #A36B5E;
-            --card-bg: #fff;
-            --story-card-bg: #F5F5F5;
-            --story-decor-color: #2D433D;
-            --slider-white: #FFFFFF;
-            --point-green: #6D7E6E; 
-            --point-brown: #A36B5E; 
-            --point-brown: #A36B5E; 
-            --point-blue: #5E7A8E;  
-            --text-black: #1A1A1A;
-            --text-gray: #777777;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MNEMO | Archive Your Scent</title>
 
-        body, html {
-            margin: 0; padding: 0;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            font-family: 'Playfair Display', 'Noto Serif KR', serif;
-            overflow-x: hidden;
-            scroll-behavior: smooth;
-        }
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Noto+Serif+KR:wght@300;400;500&display=swap" rel="stylesheet">
 
-        /* --- Navigation --- */
-        nav {
-            display: flex; justify-content: center; align-items: center; padding: 20px 30px;
-            font-size: 0.7rem; letter-spacing: 3px; text-transform: uppercase;
-            border-bottom: 1px solid rgba(0,0,0,0.05);
-            position: sticky; top: 0; background: var(--bg-color); z-index: 1000;
-        }
-        nav span { margin: 0 20px; cursor: pointer; opacity: 0.6; }
+<style>
+:root{
+    --bg:#ffffff; 
+    --text:#222;
+    --point:#6B7E5F; 
+    --green:#34443D;
+    --gray:#777;
+    --white:#fff;
+    --line-gray: rgba(0, 0, 0, 0.08);
+}
 
-        .my-memory-btn {
-            margin: 0 30px; padding: 12px 28px;
-            font-size: 0.85rem; font-weight: 600; letter-spacing: 2px;
-            color: #fff; background-color: var(--point-color);
-            border-radius: 50px; text-decoration: none;
-            transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(163, 107, 94, 0.2);
-            cursor: pointer;
-        }
-        .my-memory-btn:hover {
-            background-color: var(--story-decor-color);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(45, 67, 61, 0.3);
-        }
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
 
-        /* --- Common Section Styles --- */
-        .section-header { text-align: center; margin-bottom: 80px; }
-        .section-header .s-subtitle { font-size: 0.7rem; color: var(--point-color); letter-spacing: 4px; text-transform: uppercase; margin-bottom: 10px; }
-        .section-header .s-title { font-size: 2.2rem; letter-spacing: 2px; font-weight: 400; }
+html{
+    scroll-behavior:smooth;
+}
 
-        /* --- 1. Collage Section --- */
-        .brand-title {
-            text-align: center; font-size: 8rem; font-weight: 400; letter-spacing: -2px; line-height: 1;
-            margin: 0; padding-top: 50px; position: relative; z-index: 10; margin-bottom: -140px; pointer-events: none;
-        }
-        .collage-container { position: relative; max-width: 1200px; margin: -10px auto 0; height: 850px; }
-        .fragment { position: absolute; background-color: #ddd; overflow: hidden; box-shadow: 10px 10px 30px rgba(0,0,0,0.03); transition: all 0.5s ease; border-radius: 0; }
-        .fragment img { width: 100%; height: 100%; object-fit: cover; border-radius: 0; }
-        .fragment:not(.main-img):not(.f1):not(.f5):hover { transform: scale(1.05) translateY(-10px); z-index: 35; }
-        .main-img { width: 400px; height: 550px; left: 50%; top: 50%; transform: translate(-50%, -55%); z-index: 2; }
-        .f1 { width: 180px; height: 220px; left: 5%; top: 10%; z-index: 3; transition: transform 0.5s ease, filter 0.5s ease, z-index 0.5s ease; }
-        .f1 img { filter: blur(3px); transition: filter 0.5s ease; }
-        .f1:hover { transform: scale(1.05) translateY(-10px); z-index: 38; }
-        .f1:hover img { filter: blur(0px) !important; }
-        .f2 { width: 270px; height: 370px; left: calc(5% - 50px); top: calc(35% - 30px); z-index: 1; }
-        .f2 .img-wrapper { position: relative; width: 100%; height: 100%; }
-        .f2 img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; animation: imageFadeCycleF2 24s infinite; }
-        .f2 img:nth-child(1) { animation-delay: 0s; }
-        .f2 img:nth-child(2) { animation-delay: 8s; }
-        .f2 img:nth-child(3) { animation-delay: 16s; }
-        @keyframes imageFadeCycleF2 { 0% { opacity: 0; } 5% { opacity: 1; } 33% { opacity: 1; } 38% { opacity: 0; } 100% { opacity: 0; } }
-        .f3 { width: 200px; height: 200px; left: 18%; bottom: 5%; z-index: 3; }
-        .f4 { width: 210px; height: 210px; right: calc(8% - 50px); top: 12%; border-radius: 50% !important; z-index: 31; } 
-        .f4 .img-wrapper { position: relative; width: 100%; height: 100%; border-radius: 50%; }
-        .f4 img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: 50% !important; opacity: 0; animation: imageFadeCycleF4 15s infinite; }
-        .f4 img:nth-child(1) { animation-delay: 0s; }
-        .f4 img:nth-child(2) { animation-delay: 5s; }
-        .f4 img:nth-child(3) { animation-delay: 10s; }
-        @keyframes imageFadeCycleF4 { 0% { opacity: 0; } 10% { opacity: 1; } 33% { opacity: 1; } 43% { opacity: 0; } 100% { opacity: 0; } }
-        .f4:hover { transform: scale(1.05); z-index: 36; }
-        .f5 { width: 160px; height: 220px; right: 18%; top: 40%; z-index: 32; transition: transform 0.5s ease, filter 0.5s ease, z-index 0.5s ease; }
-        .f5 img { filter: blur(3px); transition: filter 0.5s ease; }
-        .f5:hover { transform: scale(1.05) translateY(-10px); z-index: 37; }
-        .f5:hover img { filter: blur(0px) !important; }
-        .f6 { width: 260px; height: 320px; right: 5%; bottom: 5%; z-index: 3; }
+body{
+    background:var(--bg);
+    color:var(--text);
+    overflow-x:hidden;
+    font-family:'Cormorant Garamond', serif;
+}
 
-        /* --- Brand Hero Section --- */
-        .brand-hero-section { width: 100vw; height: 120vh; margin-top: 100px; position: relative; left: 50%; right: 50%; margin-left: -50vw; margin-right: -50vw; border-bottom-left-radius: 200px; border-bottom-right-radius: 200px; overflow: hidden; background-color: #1a1a1a; }
-        .brand-hero-section::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 60%; background: linear-gradient(to bottom, var(--bg-color) 0%, rgba(245, 241, 234, 0.9) 15%, rgba(245, 241, 234, 0) 100%); z-index: 10; pointer-events: none; }
-        .brand-hero-section .hero-bg { width: 100%; height: 100%; object-fit: cover; opacity: 0.7; }
-        .hero-content { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; color: #fff; width: 100%; max-width: 800px; padding: 0 40px; z-index: 20; }
-        .hero-subtitle { font-size: 0.7rem; letter-spacing: 6px; margin-bottom: 30px; text-transform: uppercase; color: var(--bg-color); opacity: 0.8; }
-        .hero-title { font-size: 3.5rem; line-height: 1.3; margin-bottom: 40px; font-weight: 400; }
-        .hero-description { font-size: 1rem; line-height: 2.3; font-family: 'Noto Serif KR', serif; opacity: 0.8; }
+img{
+    max-width:100%;
+    display:block;
+}
 
-        /* --- Vision Section --- */
-        .vision-section { max-width: 1200px; margin: 150px auto; padding: 0 20px; }
-        .vision-grid { display: grid; grid-template-columns: 1fr 2fr 1fr; gap: 20px; align-items: center; }
-        .vision-card { background-color: var(--card-bg); border-radius: 30px; padding: 40px; box-shadow: 10px 10px 40px rgba(0,0,0,0.02); height: 100%; transition: 0.4s; text-align: center; }
-        .vision-card:hover { transform: translateY(-10px); }
-        .main-card { padding: 0; position: relative; overflow: hidden; grid-row: span 2; }
-        .main-card img { width: 100%; height: 100%; object-fit: cover; border-radius: 30px; }
-        .main-info { position: absolute; bottom: 40px; left: 40px; right: 40px; background: rgba(255,255,255,0.9); padding: 25px; border-radius: 20px; text-align: center; }
-        .side-card .c-title { font-size: 1.1rem; border-bottom: 1px solid rgba(0,0,0,0.05); padding-bottom: 15px; margin-bottom: 15px; }
-        .side-card .c-desc { font-size: 0.85rem; line-height: 2; opacity: 0.7; font-family: 'Noto Serif KR', serif; }
+section{
+    scroll-margin-top:120px;
+}
 
-        /* --- Integrated Slider Section --- */
-        .integrated-slider-area {
-            width: 100vw; height: 100vh; position: relative; overflow: hidden;
-            background-color: var(--slider-white); margin: 100px 0; 
-        }
-        .slider-wrapper {
-            display: flex; width: 300%; height: 100%;
-            transition: transform 0.9s cubic-bezier(0.7, 0, 0.3, 1);
-        }
-        .slide-item { width: 100vw; height: 100vh; display: flex; flex-shrink: 0; }
-        .slide-left { flex: 7; padding: 80px; display: flex; flex-direction: column; justify-content: center; position: relative; background-color: var(--slider-white); }
-        .slide-right { flex: 3; position: relative; display: flex; flex-direction: column; justify-content: flex-end; padding: 60px; color: #fff; transition: 0.8s ease; }
-        
-        .main-title { font-size: clamp(3.5rem, 8vw, 6rem); line-height: 1; margin: 0 0 35px 0; font-weight: 400; letter-spacing: -4px; color: var(--text-black); }
-        .main-desc { font-size: 1rem; line-height: 2; color: var(--text-gray); max-width: 450px; margin-bottom: 50px; font-family: 'Noto Serif KR', serif; }
-        .sub-label { font-size: 0.8rem; color: var(--text-gray); letter-spacing: 1px; margin-bottom: 15px; }
-        .bg-number { position: absolute; bottom: -20px; left: 80px; font-size: 22vw; font-weight: 900; color: #f6f6f6; z-index: 1; line-height: 0.8; pointer-events: none; }
-        .oval-visual {
-            position: absolute; left: -18vw; top: 50%; transform: translateY(-50%);
-            width: 35vw; height: 55vh; min-width: 380px;
-            background-size: cover; background-position: center;
-            border-radius: 18vw; box-shadow: 40px 40px 100px rgba(0,0,0,0.15); z-index: 15;
-        }
+/* ----------------------------------------
+   ★ 상단 고정 헤더 & 내비게이션 영역
+   ---------------------------------------- */
+header {
+    width: 100%;
+    background-color: var(--white);
+    border-bottom: 1px solid var(--line-gray);
+    padding: 20px 6vw 15px 6vw;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 9999;
+    backdrop-filter: blur(14px);
+    background: rgba(255, 255, 255, 0.85);
+}
 
-        /* [수정 포인트] 페이지네이션 위치를 왼쪽(slide-left) 하단으로 이동 */
-        .integrated-pagination {
-            position: absolute; bottom: 80px; left: 80px; z-index: 100;
-            display: flex; gap: 30px;
-        }
-        .pg-item { display: flex; flex-direction: column; align-items: center; gap: 10px; cursor: pointer; }
-        .pg-num { font-size: 0.8rem; font-weight: 600; opacity: 0.2; color: var(--text-black); transition: 0.3s; }
-        .pg-dot { width: 6px; height: 6px; background-color: var(--text-black); border-radius: 50%; opacity: 0.1; transition: 0.3s; }
-        .pg-item.active .pg-num { opacity: 1; }
-        .pg-item.active .pg-dot { opacity: 1; transform: scale(1.3); }
+.header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
 
-        .s1 .slide-right { background-color: var(--point-green); }
-        .s2 .slide-right { background-color: var(--point-brown); }
-        .s3 .slide-right { background-color: var(--point-blue); }
+.search-section {
+    width: 30%;
+    text-align: left;
+}
 
-        /* --- Scent Story Section --- */
-        .scent-story-section { max-width: 1150px; margin: 150px auto; padding: 0 20px; scroll-margin-top: 50px; }
-        .story-container { width: 100%; height: 650px; background-color: var(--story-card-bg); border-radius: 60px; position: relative; display: flex; overflow: hidden; box-shadow: 0 40px 100px rgba(0,0,0,0.05); }
-        .content-left { flex: 1; padding-left: 80px; display: flex; flex-direction: column; justify-content: center; z-index: 10; }
-        .headline { font-size: 3.2rem; line-height: 1.1; margin-bottom: 30px; font-weight: 400; color: var(--text-color); }
-        .description { font-size: 1rem; line-height: 1.8; color: #666; max-width: 380px; margin-bottom: 45px; font-family: 'Noto Serif KR', serif; }
-        .cta-button { width: fit-content; padding: 16px 45px; background-color: var(--story-decor-color); color: #fff; border-radius: 35px; text-decoration: none; font-size: 0.9rem; letter-spacing: 2px; }
-        .content-right-story { flex: 1.2; position: relative; display: flex; justify-content: flex-end; align-items: center; }
-        .oval-frame { width: 420px; height: 520px; border-radius: 210px; position: absolute; right: 120px; z-index: 5; box-shadow: 20px 20px 60px rgba(0,0,0,0.1); overflow: hidden; }
-        .oval-frame img { width: 100%; height: 100%; object-fit: cover; }
-        .decor-bar { width: 220px; height: 100%; background-color: var(--story-decor-color); border-top-left-radius: 220px; border-bottom-left-radius: 220px; display: flex; justify-content: center; align-items: center; writing-mode: vertical-lr; color: rgba(255,255,255,0.2); font-size: 2.8rem; }
-        
-        footer { display: flex; justify-content: space-between; padding: 120px 80px; font-size: 0.8rem; opacity: 0.4; }
-    </style>
+.search-box {
+    display: inline-flex;
+    align-items: center;
+    font-size: 0.75rem;
+    color: var(--gray);
+    text-decoration: none;
+    font-family: 'Noto Serif KR', serif;
+    letter-spacing: 0.5px;
+    transition: color 0.3s ease;
+}
+
+.search-icon {
+    position: relative;
+    display: inline-block;
+    width: 11px;
+    height: 11px;
+    border: 1.5px solid #444;
+    border-radius: 50%;
+    margin-right: 7px;
+    transform: rotate(-45deg);
+    transition: border-color 0.3s ease;
+}
+
+.search-icon::after {
+    content: '';
+    position: absolute;
+    top: 9px;
+    left: 3.5px;
+    width: 1.5px;
+    height: 6px;
+    background-color: #444;
+    transition: background-color 0.3s ease;
+}
+
+.search-box:hover {
+    color: var(--point);
+}
+
+.search-box:hover .search-icon {
+    border-color: var(--point);
+}
+
+.search-box:hover .search-icon::after {
+    background-color: var(--point);
+}
+
+.logo-section {
+    width: 40%;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.logo-link {
+    text-decoration: none;
+    color: inherit;
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* ★ 42px 크기 세팅 최적화 */
+.header-logo-img {
+    max-width: 190px;  
+    max-height: 42px;  /* 요청하신 42px 최종 가이드 적용 */
+    width: auto;       
+    height: auto;      
+    object-fit: contain;
+    display: block;
+    margin: 0 auto;
+}
+
+.logo-sub {
+    font-size: 9px;
+    letter-spacing: 3px;
+    color: var(--gray);
+    margin-top: 5px;
+}
+
+.user-section {
+    width: 30%;
+    text-align: right;
+    font-size: 0.75rem;
+    font-family: 'Noto Serif KR', serif;
+}
+
+.user-menu {
+    display: inline-block;
+    margin-right: 20px;
+    color: var(--text);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+.user-menu:hover, .cart-menu:hover {
+    color: var(--point);
+}
+
+.cart-menu {
+    display: inline-block;
+    color: var(--text);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+nav {
+    width: 100%;
+    text-align: center;
+    margin-top: 10px;
+}
+
+.nav-menu {
+    list-style: none;
+    display: inline-block;
+    padding: 0;
+    margin: 0;
+}
+
+.nav-menu li {
+    display: inline-block;
+    margin: 0 16px;
+}
+
+.nav-menu li a {
+    font-size: 0.78rem;
+    font-weight: bold;
+    color: var(--text);
+    text-decoration: none;
+    letter-spacing: 1px;
+    font-family: 'Noto Serif KR', serif;
+    opacity: 0.6;
+    transition: color 0.3s ease, opacity 0.3s ease;
+}
+
+.nav-menu li a:hover,
+.nav-menu li a.active {
+    color: var(--point);
+    opacity: 1;
+}
+
+/* ----------------------------------------
+    첫 화면 크기에 딱 맞춰지는 메인 히어로 섹션
+   ---------------------------------------- */
+.main-hero {
+    position: relative;
+    width: 100%;
+    height: calc(100vh - 130px); 
+    min-height: 550px;
+    overflow: hidden;
+    background-color: #000;
+}
+
+.hero-bg-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center center;
+    transition: opacity 0.8s cubic-bezier(0.25, 1, 0.5, 1), transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+    opacity: 0;
+    transform: scale(1.03);
+    z-index: 1;
+}
+
+.hero-bg-layer::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.65));
+}
+
+.bg-default  { background-image: url('custom_img/misty_m_4.jpg'); opacity: 1; transform: scale(1); }
+.bg-ven      { background-image: url('logo/ven_2.png'); }
+.bg-deza     { background-image: url('logo/deza.jpg'); }
+.bg-body     { background-image: url('logo/ven_3.png'); }
+.bg-press    { background-image: url('https://images.unsplash.com/photo-1447752875215-b2761acb3c5d?auto=format&fit=crop&w=1000'); }
+
+/* 기본 중앙 고정 브랜드 영역 */
+.mnemo-center-brand {
+    position: absolute;
+    top: 45%;               
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    color: var(--white);
+    z-index: 3; 
+    width: 100%;
+    pointer-events: none; 
+    transition: opacity 0.5s cubic-bezier(0.25, 1, 0.5, 1), transform 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ★ 중앙 노출 흰색 로고 이미지 크기 살짝 축소 조율 완료 */
+.mnemo-center-brand-img {
+    max-width: 325px;       /* ★ 기존 370px에서 325px로 미세 조정하여 세련미 부각 */
+    width: 80%;
+    height: auto;
+    object-fit: contain;
+    margin-bottom: 24px;   
+    filter: drop-shadow(0 10px 20px rgba(0,0,0,0.3));
+}
+
+.mnemo-center-brand-text {
+    font-size: 0.92rem;    
+    font-weight: 400;
+    letter-spacing: 11px;   
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 30px;    
+    padding-left: 11px;     
+    font-family: 'Cormorant Garamond', serif;
+    text-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+.mnemo-center-brand p {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 0.95rem;
+    font-weight: 300;
+    letter-spacing: 1px;
+    line-height: 2;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+/* 커서 올렸을 때 이미지 위에 중앙 정렬로 노출될 텍스트 정보 보드 */
+.hero-hover-brand-board {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -52%);
+    text-align: center;
+    color: var(--white);
+    z-index: 4;
+    width: 80%;
+    max-width: 800px;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.5s cubic-bezier(0.25, 1, 0.5, 1), transform 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.hover-title {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 2.8rem;
+    font-weight: 400;
+    letter-spacing: 2px;
+    margin-bottom: 18px;
+    text-shadow: 0 4px 20px rgba(0,0,0,0.3);
+}
+
+.hover-desc {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 1.05rem;
+    font-weight: 300;
+    line-height: 1.8;
+    color: rgba(255, 255, 255, 0.85);
+    letter-spacing: 0.5px;
+}
+
+/* 어느 한 기둥이라도 마우스 오버되면 기본 중앙 브랜드 문구 숨기기 */
+.main-hero:has(.banner-col:hover) .mnemo-center-brand {
+    opacity: 0;
+    transform: translate(-50%, -55%); 
+}
+
+.main-hero:has(.col-1:hover) .hover-board-1 { opacity: 1; transform: translate(-50%, -57%); }
+.main-hero:has(.col-2:hover) .hover-board-2 { opacity: 1; transform: translate(-50%, -57%); }
+.main-hero:has(.col-3:hover) .hover-board-3 { opacity: 1; transform: translate(-50%, -57%); }
+.main-hero:has(.col-4:hover) .hover-board-4 { opacity: 1; transform: translate(-50%, -57%); }
+
+.banner-columns {
+    position: relative;
+    display: flex;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+}
+
+.banner-col {
+    flex: 1;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 0 35px 50px 35px; 
+    color: var(--white);
+    text-decoration: none;
+    transition: background-color 0.5s ease;
+    border-right: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.banner-col:hover {
+    background-color: rgba(0, 0, 0, 0.15);
+}
+
+.banner-col:last-child {
+    border-right: none;
+}
+
+/* 배경 이미지 레이어 매칭 구조 인터랙션 */
+.banner-columns:has(.col-1:hover) ~ .bg-default,
+.banner-columns:has(.col-2:hover) ~ .bg-default,
+.banner-columns:has(.col-3:hover) ~ .bg-default,
+.banner-columns:has(.col-4:hover) ~ .bg-default {
+    opacity: 0;
+    transform: scale(1.03);
+}
+
+.banner-columns:has(.col-1:hover) ~ .bg-ven      { opacity: 1; transform: scale(1); }
+.banner-columns:has(.col-2:hover) ~ .bg-deza     { opacity: 1; transform: scale(1); }
+.banner-columns:has(.col-3:hover) ~ .bg-body     { opacity: 1; transform: scale(1); }
+.banner-columns:has(.col-4:hover) ~ .bg-press    { opacity: 1; transform: scale(1); }
+
+.col-eng-title {
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 3px;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.45); 
+    transition: all 0.4s ease;
+}
+
+.col-kor-title {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 1.05rem;
+    font-weight: 500;
+    margin-bottom: 14px;
+    letter-spacing: -0.3px;
+    color: rgba(255, 255, 255, 0.45); 
+    transition: all 0.4s ease;
+}
+
+.col-desc {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.35); 
+    line-height: 1.7;
+    margin-bottom: 20px;
+    height: 40px;
+    overflow: hidden;
+    transition: all 0.4s ease;
+}
+
+.btn-more {
+    display: inline-block;
+    font-size: 0.75rem;
+    font-family: 'Noto Serif KR', serif;
+    color: var(--white);
+    text-decoration: none;
+    border-bottom: 1px solid var(--white);
+    padding-bottom: 3px;
+    font-weight: 500;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+    letter-spacing: 0.5px;
+}
+
+.banner-col:hover .col-eng-title { color: var(--white); }
+.banner-col:hover .col-kor-title { color: var(--white); }
+.banner-col:hover .col-desc      { color: rgba(255, 255, 255, 0.95); }
+.banner-col:hover .btn-more      { opacity: 1; transform: translateY(0); }
+
+
+/* COMMON */
+.section-header{
+    text-align:center;
+    margin-bottom:60px;
+}
+
+.s-sub{
+    color:var(--point);
+    letter-spacing:4px;
+    text-transform:uppercase;
+    font-size:.7rem;
+    margin-bottom:10px;
+}
+
+.s-title{
+    font-size:2.4rem;
+    font-weight:400;
+    letter-spacing:2px;
+    margin-bottom:14px;
+}
+
+.s-desc{
+    color:var(--gray);
+    font-family:'Noto Serif KR', serif;
+    font-size:.9rem;
+}
+
+/* ANIMATION */
+.fade-up{
+    opacity:0;
+    transform:translateY(60px);
+    transition:1s ease;
+}
+
+.fade-up.show{
+    opacity:1;
+    transform:translateY(0);
+}
+
+/* VISION */
+.vision{
+    max-width:1300px;
+    margin:150px auto;
+    padding:0 30px;
+}
+
+.vision-grid{
+    display:grid;
+    grid-template-columns:1fr 2fr 1fr;
+    gap:24px;
+    border-top: 1px solid var(--line-gray);
+    padding-top: 20px;
+}
+
+.vision-card{
+    position:relative;
+    overflow:hidden;
+    border-radius:4px;
+    min-height:500px;
+    box-shadow:0 25px 70px rgba(0,0,0,.05);
+    transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.vision-card img{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.vision-card.clickable{
+    cursor:pointer;
+}
+
+.vision-card.clickable:hover{
+    transform: translateY(-8px);
+    box-shadow: 0 35px 80px rgba(0,0,0,.12);
+}
+
+.vision-card.clickable:hover img{
+    transform: scale(1.05);
+}
+
+.vision-info{
+    position:absolute;
+    bottom:0;
+    width:100%;
+    padding:35px;
+    background:rgba(255,255,255,.85);
+    backdrop-filter:blur(12px);
+    -webkit-backdrop-filter:blur(12px);
+    z-index:2;
+}
+
+.vision-info span{
+    color:var(--point);
+    font-size:.8rem;
+    display:block;
+    margin-bottom:10px;
+}
+
+.vision-info h3{
+    margin-bottom:12px;
+    font-size:1.2rem;
+}
+
+.vision-info p{
+    font-family:'Noto Serif KR', serif;
+    color:#555;
+    line-height:1.8;
+    font-size:.85rem;
+}
+
+/* -------------------------------------------------------
+   ★ COLLECTION (상품 아카이브 파트 및 이미지 톤 패치 완료)
+   ------------------------------------------------------- */
+.collection{
+    max-width:1400px;
+    margin:150px auto;
+    padding:0 40px; 
+}
+
+.collection-grid{
+    display:grid;
+    grid-template-columns: repeat(4, 1fr);
+    column-gap: 45px; 
+    row-gap: 60px;    
+    border-top: 1px solid var(--line-gray);
+    padding-top: 40px; 
+}
+
+/* 링크형 카드로 작동하도록 커서 포인터 스타일 보강 */
+.perfume-card{
+    background: transparent;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+}
+
+.perfume-image{
+    overflow:hidden;
+    width: 100%;
+    aspect-ratio: 1 / 1.1;
+    background: #fdfdfd; 
+    border: 1px solid #f2f2f2; 
+}
+
+.perfume-image img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    transition: opacity 0.4s ease;
+}
+
+.perfume-card:hover .perfume-image img {
+    opacity: 0.85;
+}
+
+.perfume-info{
+    padding: 20px 4px 8px 4px; 
+    display: flex;
+    flex-direction: column;
+    border-bottom: 1px solid var(--line-gray);
+}
+
+.perfume-name{
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 0.95rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #000;
+    margin-bottom: 4px;
+}
+
+.perfume-kor-name {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 0.88rem;
+    color: #333;
+    margin-bottom: 12px;
+}
+
+.perfume-spec-box {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 0.72rem;
+    line-height: 1.6;
+    color: #777;
+    margin-bottom: 16px;
+    min-height: 34px;
+}
+
+.perfume-purchase-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 12px;
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.action-btn-link {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 0.75rem;
+    color: #000;
+    text-decoration: none;
+    border-bottom: 1px solid #000;
+    padding-bottom: 1px;
+    background: transparent;
+    border-top: none; border-left: none; border-right: none;
+    cursor: pointer;
+    transition: opacity 0.2s, color 0.2s;
+}
+
+.action-btn-link:hover {
+    color: var(--point);
+    border-color: var(--point);
+}
+
+.perfume-price-display {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: #000;
+}
+
+/* 컬렉션 하단 '더보기' 버튼 영역 스타일 */
+.collection-more-container {
+    text-align: center;
+    margin-top: 50px;
+}
+
+/* 링크 태그에 맞춤형 버튼 디자인 부여 */
+.collection-more-btn {
+    display: inline-block;
+    font-family: 'Noto Serif KR', serif;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--text);
+    text-decoration: none;
+    letter-spacing: 1px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid var(--text);
+    transition: color 0.3s ease, border-color 0.3s ease;
+    cursor: pointer;
+}
+
+.collection-more-btn:hover {
+    color: var(--point);
+    border-color: var(--point);
+}
+
+/* SHOWROOM */
+.store-showroom{
+    max-width:1300px;
+    margin:160px auto;
+    padding:0 30px;
+    scroll-margin-top:110px;
+}
+
+.store-container {
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr;
+    gap: 50px;
+    background: #FFFFFF;
+    padding: 45px;
+    border-radius: 4px;
+    border: 1px solid #f0f0f0; 
+    box-shadow: 0 30px 70px rgba(0,0,0,0.03);
+    align-items: center;
+    margin-bottom: 0; 
+}
+
+.store-map-wrapper {
+    width: 100%;
+    height: 460px;
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+    background: #E5E3DF;
+}
+
+.map-iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+    display: none;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+}
+
+.map-iframe.active {
+    display: block;
+    opacity: 1;
+}
+
+.store-tabs {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.store-tab-btn {
+    background: transparent;
+    border: 1px solid rgba(0,0,0,0.05);
+    border-radius: 4px;
+    padding: 24px;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+    font-family: 'Noto Serif KR', serif;
+}
+
+.store-tab-btn strong {
+    display: block;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.35rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
+    color: var(--text);
+    transition: color 0.3s;
+}
+
+.store-tab-btn p {
+    margin: 0;
+    font-size: 0.85rem;
+    color: var(--gray);
+    line-height: 1.6;
+}
+
+.store-tab-btn.active {
+    background: #FAF8F5; 
+    border-color: var(--point);
+    box-shadow: 0 10px 30px rgba(163, 107, 94, 0.06);
+}
+
+.store-tab-btn.active strong {
+    color: var(--point);
+}
+
+
+/* PRODUCT REGULATORY INFORMATION */
+.regulatory-disclosure-section {
+    max-width: 1300px;
+    margin: 0 auto 100px auto;
+    padding: 60px 30px 0 30px;
+    border-top: 1px solid var(--line-gray);
+}
+.disclosure-title {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 0.85rem;
+    font-weight: 500;
+    letter-spacing: 1px;
+    color: var(--text);
+    margin-bottom: 25px;
+    text-transform: uppercase;
+}
+.disclosure-title-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 50px;
+}
+.disclosure-item {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 0.8rem;
+    line-height: 1.8;
+    color: var(--gray);
+}
+.disclosure-item strong {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--text);
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+/* FOOTER BAR */
+.footer-bar {
+    width: 100%;
+    background-color: var(--white);
+    padding: 40px 6vw;
+    display: flex;
+    justify-content: space-between;
+    border-top: 1px solid var(--line-gray);
+}
+
+.footer-item {
+    width: 25%;
+    text-align: center;
+    font-size: 0.78rem;
+    color: var(--gray);
+    font-family: 'Noto Serif KR', serif;
+}
+
+/* MOBILE */
+@media(max-width:900px){
+    header { padding: 15px 20px; position: relative; background: var(--white); }
+    .header-top { display: block; text-align: center; }
+    .search-section, .user-section { display: none; }
+    .logo-section { display: block; width: 100%; }
+    nav { margin-top: 15px; }
+    .nav-menu li { margin: 0 8px; }
+    .nav-menu li a { font-size: 0.72rem; }
+
+    .main-hero { display: block; height: auto; }
+    .mnemo-center-brand {
+        position: relative;
+        top: 0; left: 0; transform: none;
+        padding: 60px 20px;
+        background-color: #111111;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+    .main-hero:has(.banner-col:hover) .mnemo-center-brand {
+        opacity: 1; transform: none;
+    }
+    .mnemo-center-brand-img { max-width: 210px; margin-bottom: 14px; }
+    .mnemo-center-brand-text { font-size: 0.78rem; letter-spacing: 7px; margin-bottom: 20px; padding-left: 7px; }
+    
+    .hero-hover-brand-board { display: none !important; }
+
+    .banner-columns { display: block; z-index: 5; }
+    .banner-col {
+        display: block;
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 50px 25px;
+        background-color: rgba(0, 0, 0, 0.6); 
+    }
+    .col-eng-title, .col-kor-title { color: var(--white); }
+    .col-desc { color: rgba(255, 255, 255, 0.8); }
+    .btn-more { opacity: 1; transform: translateY(0); }
+    .hero-bg-layer { display: none; }
+    .bg-default { display: block; position: absolute; z-index: 1; }
+
+    .vision-grid { grid-template-columns:1fr; display:grid; padding-top: 15px; }
+    
+    .collection-grid { 
+        grid-template-columns: repeat(2, 1fr); 
+        column-gap: 20px; 
+        row-gap: 35px;
+        padding-top: 25px;
+    }
+    .store-container { grid-template-columns: 1fr; gap: 30px; padding: 25px; border-radius: 4px; }
+    .store-map-wrapper { height: 320px; }
+    .disclosure-title-grid { grid-template-columns: 1fr; gap: 30px; }
+
+    .footer-bar { display: flex; flex-direction: column; gap: 16px; text-align: center; }
+    .footer-item { display: block; width: 100%; }
+}
+</style>
 </head>
 <body>
 
-    <nav>
-        <span>Collections</span>
-        <span>Archive</span>
-        <a href="#scent-story" class="my-memory-btn">MY MEMORY</a>
-        <span>Vision</span>
-        <span>Scent Story</span>
-    </nav>
-
-    <h1 class="brand-title">MNEMO</h1>
-    <div class="collage-container">
-        <div class="fragment main-img"><img src="1998.png"></div>
-        <div class="fragment f1"><img src="https://images.unsplash.com/photo-1501854140801-50d01698950b?auto=format&fit=crop&w=600"></div>
-        <div class="fragment f2">
-            <div class="img-wrapper">
-                <img src="https://images.unsplash.com/photo-1470770841072-f978cf4d019e?auto=format&fit=crop&w=600">
-                <img src="https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=600">
-                <img src="https://images.unsplash.com/photo-1500673922987-e212871fec22?auto=format&fit=crop&w=600">
+    <!-- 고정 헤더 & 대메뉴 영역 -->
+    <header>
+        <div class="header-top">
+            <div class="search-section">
+                <a href="#" class="search-box">
+                    <span class="search-icon"></span>SEARCH
+                </a>
+            </div>
+            <div class="logo-section">
+                <a href="#" class="logo-link">
+                    <img src="logo/logo_B.png" alt="MNEMO" class="header-logo-img">
+                    <div class="logo-sub">ARCHIVE YOUR SCENT</div>
+                </a>
+            </div>
+            <div class="user-section">
+                <a href="login.html" class="user-menu">LOGIN / JOIN</a>
+                <a href="cart.html" class="cart-menu">CART (0)</a>
             </div>
         </div>
-        <div class="fragment f3"><img src="https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=crop&w=600"></div>
-        <div class="fragment f4">
-            <div class="img-wrapper">
-                <img src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=600">
-                <img src="https://images.unsplash.com/photo-1490750967868-88aa4486c946?auto=format&fit=crop&w=600">
-                <img src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=600">
+        
+        <nav>
+            <ul class="nav-menu">
+                <li><a href="#vision" class="nav-link">프래그런스</a></li>
+                <li><a href="#collection" class="nav-link">컬렉션</a></li>
+                <li><a href="sell_main.html">상품</a></li>
+                <li><a href="#showroom" class="nav-link">스토어 정보</a></li>
+                <li><a href="custom_who.html" class="nav-link">나만의 향수 만들기</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div style="height: 130px; width: 100%;"></div>
+
+    <!-- 4분할 기둥 인터랙션 히어로 섹션 -->
+    <section class="main-hero">
+        <div class="mnemo-brand-container">
+            <div class="mnemo-center-brand">
+                <img src="logo/logo_W.png" alt="MNEMO" class="mnemo-center-brand-img">
+                <div class="mnemo-center-brand-text">menemo</div>
+                <p>기억은 사라지지 않습니다.<br>단지 향으로 남아있을 뿐.</p>
+            </div>
+            
+            <!-- 마우스 호버 시 중앙 상단에 출력될 타이틀 & 설명 영역 -->
+            <div class="hero-hover-brand-board hover-board-1">
+                <h3 class="hover-title">나의 기억 향수 만들기</h3>
+                <p class="hover-desc">간단한 테스트 후 나만의 아카이브에 존재하는 오리지널 기억 향수를 디자인해 보세요.</p>
+            </div>
+            <div class="hero-hover-brand-board hover-board-2">
+                <h3 class="hover-title">데자뷔 (Déjà vu)</h3>
+                <p class="hover-desc">MENEMO의 첫번째 컬렉션<br>분명 처음 마주하지만 언젠가 스쳐 보았던 무의식 속 향의 실루엣을 복원합니다.</p>
+            </div>
+            <div class="hero-hover-brand-board hover-board-3">
+                <h3 class="hover-title">찬란한 기억 (Epiphany)</h3>
+                <p class="hover-desc">한여름 소나기가 내린 뒤 쨍하게 비추는 해방감과 싱그러운 찰나를 새긴 라인업.</p>
+            </div>
+            <div class="hero-hover-brand-board hover-board-4">
+                <h3 class="hover-title">므네모 쇼룸 공간</h3>
+                <p class="hover-desc">당신의 감각을 일깨우는 비정형 아카이브 아뜰리에 오프라인 스페이스를 경험해 보세요.</p>
             </div>
         </div>
-        <div class="fragment f5"><img src="https://images.unsplash.com/photo-1447752875215-b2761acb3c5d?auto=format&fit=crop&w=600"></div>
-        <div class="fragment f6"><img src="https://images.unsplash.com/photo-1433086966358-54859d0ed716?auto=format&fit=crop&w=800"></div>
-    </div>
 
-    <section class="brand-hero-section">
-        <img src="https://images.unsplash.com/photo-1501183007986-d0d080b147f9?auto=format&fit=crop&q=80&w=1600" class="hero-bg" alt="Brand Story">
-        <div class="hero-content">
-            <p class="hero-subtitle">The Scent of Recollection</p>
-            <h2 class="hero-title">당신의 기억은 <br> 어떤 향을 남겼나요?</h2>
-            <p class="hero-description">휘발되지 않는 영원한 잔상을 디자인하는 <br> MNEMO Archive의 여정에 함께합니다.</p>
+        <div class="banner-columns">
+            <a href="custom_who.html" class="banner-col col-1">
+                <div class="col-eng-title">MY MEMORY</div>
+                <div class="col-kor-title">나의 기억 향수 만들기</div>
+                <div class="col-desc">간단한 테스트 후 나의 기억 향수를 만들어보세요.</div>
+                <div class="btn-more">자세히 보기</div>
+            </a>
+
+            <a href="Dezav.html" class="banner-col col-2">
+                <div class="col-eng-title">Déjà vu</div>
+                <div class="col-kor-title">데자뷔</div>
+                <div class="col-desc">어디선가 느껴보았던 향을 복원합니다...</div>
+                <div class="btn-more">자세히 보기</div>
+            </a>
+
+            <a href="Epiphany_main_sell.html" class="banner-col col-3">
+                <div class="col-eng-title">Epiphany</div>
+                <div class="col-kor-title">찬란한 기억</div>
+                <div class="col-desc">도시의 깊은 새벽녘 차가운 공기와 고요한 잔상을 새긴 젠더리스 라인업...</div>
+                <div class="btn-more">자세히 보기</div>
+            </a>
+
+            <a href="#showroom" class="banner-col col-4">
+                <div class="col-eng-title">SHOWROOM SPACES</div>
+                <div class="col-kor-title">므네모 쇼룸 공간</div>
+                <div class="col-desc">당신의 감각을 깨우는 비정형 아카이브 아뜰리에 오프라인 스페이스...</div>
+                <div class="btn-more">자세히 보기</div>
+            </a>
         </div>
+
+        <div class="hero-bg-layer bg-default"></div>
+        <div class="hero-bg-layer bg-ven"></div>
+        <div class="hero-bg-layer bg-deza"></div>
+        <div class="hero-bg-layer bg-body"></div>
+        <div class="hero-bg-layer bg-press"></div>
     </section>
 
-    <section class="vision-section">
+    <!-- VISION SECTION -->
+    <section id="vision" class="vision fade-up">
         <div class="section-header">
-            <p class="s-subtitle">The MNEMO Vision</p>
+            <p class="s-sub">The MNEMO Vision</p>
             <h2 class="s-title">ARCHIVE YOUR SCENT</h2>
+            <p class="s-desc">당신의 기억을 향기로 복원해드립니다.</p>
         </div>
+
         <div class="vision-grid">
-            <div class="vision-card side-card">
-                <span class="c-index">Goal 01</span>
-                <h3 class="c-title">기억의 감각적 복원</h3>
-                <p class="c-desc">단순한 기록을 넘어, 그날의 공기, 분위기, 감정까지 완벽하게 복원하는 오감 중심의 아카이빙.</p>
-            </div>
-            <div class="vision-card main-card">
-                <div class="main-info">
-                    <p class="m-title">The Afterimage Scent</p>
-                    <p class="m-desc">잊혀가는 잔상을 향기로 영원히 기록합니다.</p>
+            <div class="vision-card clickable fade-up" onclick="location.href='#collection'">
+                <img src="custom_img/misty_m_9.jpg">
+                <div class="vision-info">
+                    <span>Concept 01</span>
+                    <h3>기억의 복원</h3>
+                    <p>그날의 공기와 감정까지 향으로 복원합니다.</p>
                 </div>
             </div>
-            <div class="vision-card side-card">
-                <span class="c-index">Goal 02</span>
-                <h3 class="c-title">당신만의 향기 지도</h3>
-                <p class="c-desc">누구에게나 존재하는 독창적이고 특별한 기억의 향을 수집하여 맞춤형 아카이브 서비스를 제공합니다.</p>
+
+            <div class="vision-card clickable fade-up" onclick="location.href='#showroom'">
+                <img src="logo/mdbd_back_1.png">
+                <div class="vision-info">
+                    <span>Signature</span>
+                    <h3>향의 잔상</h3>
+                    <p>잊혀가는 잔상을 향기로 영원히 기록합니다.</p>
+                </div>
+            </div>
+
+            <div class="vision-card clickable fade-up" onclick="location.href='custom_who.html'">
+                <img src="custom_img/misty_h_4.jpg">
+                <div class="vision-info">
+                    <span>Concept 02</span>
+                    <h3>나만의 향수 만들기</h3>
+                    <p>당신만의 기억을 향으로 아카이빙합니다.</p>
+                </div>
             </div>
         </div>
     </section>
 
-    <div class="integrated-slider-area">
-        <div class="slider-wrapper" id="mainSlider">
-            <section class="slide-item s1">
-                <div class="slide-left">
-                    <div class="main-body">
-                        <p class="sub-label">Natural Fragments</p>
-                        <h1 class="main-title">Eternal<br>Ecosystem</h1>
-                        <p class="main-desc">시간이 흘러도 변치 않고 스스로 순환하며 살아 숨 쉬는 기억의 세계.</p>
-                    </div>
-                    <div class="bg-number">01</div>
-                </div>
-                <div class="slide-right">
-                    <div class="oval-visual" style="background-image: url('https://images.unsplash.com/photo-1523348837708-15d4a09cfac2?auto=format&fit=crop&q=80&w=800');"></div>
-                </div>
-            </section>
-            <section class="slide-item s2">
-                <div class="slide-left">
-                    <div class="main-body">
-                        <p class="sub-label">Memory Fragments</p>
-                        <h1 class="main-title">Sensory<br>Archive</h1>
-                        <p class="main-desc">향기는 뇌의 기억 담당 부위와 직접 연결된 유일한 감각입니다. 찰나의 향기로 소중한 순간을 완벽하게 소환해 보세요.</p>
-                    </div>
-                    <div class="bg-number">02</div>
-                </div>
-                <div class="slide-right">
-                    <div class="oval-visual" style="background-image: url('https://images.unsplash.com/photo-1516331138075-f3adc1e149cd?auto=format&fit=crop&w=800');"></div>
-                </div>
-            </section>
-            <section class="slide-item s3">
-                <div class="slide-left">
-                    <div class="main-body">
-                        <p class="sub-label">Collection Part</p>
-                        <h1 class="main-title">Modern<br>Legacy</h1>
-                        <p class="main-desc">단순한 기록을 넘어, 그날의 공기기와 분위기, 감정까지 복원하는 오감 중심의 아카이빙 서비스를 경험해 보십시오.</p>
-                    </div>
-                    <div class="bg-number">03</div>
-                </div>
-                <div class="slide-right">
-                    <div class="oval-visual" style="background-image: url('https://images.unsplash.com/photo-1501854140801-50d01698950b?auto=format&fit=crop&w=800');"></div>
-                </div>
-            </section>
+    <!-- COLLECTION SECTION -->
+    <section id="collection" class="collection">
+        <div class="section-header fade-up">
+            <p class="s-sub">MNEMO Collection</p>
+            <h2 class="s-title">THE PERFUME COLLECTION</h2>
+            <p class="s-desc">기억의 감각적 아카이브 라인업</p>
         </div>
 
-        <div class="integrated-pagination">
-            <div class="pg-item active" onclick="moveSlider(0)">
-                <span class="pg-num">01</span><div class="pg-dot"></div>
+        <div class="collection-grid fade-up">
+            <!-- Item 1 (01-A. 미지의 고향) -->
+            <div class="perfume-card" onclick="location.href='sell_MISTY_M.html'">
+                <div class="perfume-image">
+                    <img src="Goods_img/book_2.png" alt="SANTAL 33 EAU DE PARFUM & HAND SET">
+                </div>
+                <div class="perfume-info">
+                    <h4 class="perfume-name">01-A. 미지의 고향 <br>(MISTY M)</h4>
+                    <p class="perfume-kor-name">상탈 33 오 드 퍼퓸 & 핸드 세트</p>
+                    <div class="perfume-spec-box">
+                        15 ml + 50 ml<br>오 드 퍼퓸 & 퍼퓸드 핸드 크림
+                    </div>
+                    <div class="perfume-purchase-row">
+                        <button class="action-btn-link" onclick="event.stopPropagation(); location.href='rain1998_sell.html'">장바구니 담기</button>
+                        <span class="perfume-price-display">181,000 원</span>
+                    </div>
+                </div>
             </div>
-            <div class="pg-item" onclick="moveSlider(1)">
-                <span class="pg-num">02</span><div class="pg-dot"></div>
+
+            <!-- Item 2 (꿈의 잔상) -->
+            <div class="perfume-card" onclick="location.href='sell_1_Dream.html'">
+                <div class="perfume-image">
+                    <img src="Goods_img/rain1998_3.png" alt="SANTAL 33 50ml">
+                </div>
+                <div class="perfume-info">
+                    <h4 class="perfume-name">01-B. 꿈의 잔상<br>(Echoes in a Dream)</h4>
+                    <p class="perfume-kor-name">상탈 33</p>
+                    <div class="perfume-spec-box">
+                        50 ml<br>오 드 퍼퓸
+                    </div>
+                    <div class="perfume-purchase-row">
+                        <button class="action-btn-link" onclick="event.stopPropagation();">장바구니 담기</button>
+                        <span class="perfume-price-display">310,000 원</span>
+                    </div>
+                </div>
             </div>
-            <div class="pg-item" onclick="moveSlider(2)">
-                <span class="pg-num">03</span><div class="pg-dot"></div>
+
+            <!-- Item 3 (찰나의 평행세계) -->
+            <div class="perfume-card" onclick="location.href='sell_Window.html'">
+                <div class="perfume-image">
+                    <img src="Goods_img/dream.png" alt="SANTAL 33 100ml">
+                </div>
+                <div class="perfume-info">
+                    <h4 class="perfume-name">01-C. 찰나의 평행세계<br>(Parallel Window)</h4>
+                    <p class="perfume-kor-name">상탈 33</p>
+                    <div class="perfume-spec-box">
+                        100 ml<br>오 드 퍼퓸
+                    </div>
+                    <div class="perfume-purchase-row">
+                        <button class="action-btn-link" onclick="event.stopPropagation();">장바구니 담기</button>
+                        <span class="perfume-price-display">458,000 원</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Item 4 (01-D. 환생의 기억) -->
+            <div class="perfume-card" onclick="location.href='sell_Love.html'">
+                <div class="perfume-image">
+                    <img src="Goods_img/De_2.png" alt="SANTAL 33 500ml">
+                </div>
+                <div class="perfume-info">
+                    <h4 class="perfume-name">01-D. 환생의 기억<br>(Past Life Love)</h4>
+                    <p class="perfume-kor-name">상탈 33</p>
+                    <div class="perfume-spec-box">
+                        500 ml<br>오 드 퍼퓸
+                    </div>
+                    <div class="perfume-purchase-row">
+                        <!-- 이벤트 버블링(충돌) 방지를 위해 stopPropagation 추가 -->
+                        <button class="action-btn-link" onclick="event.stopPropagation();">재입고 알림</button>
+                        <span class="perfume-price-display">1,580,000 원</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="collection-more-container fade-up">
+            <a href="sell_main.html" class="collection-more-btn">더보기</a>
+        </div>
+    </section>
+
+    <!-- SHOWROOM SECTION -->
+    <section id="showroom" class="store-showroom fade-up">
+        <div class="section-header">
+            <p class="s-sub">MNEMO Spaces</p>
+            <h2 class="s-title">SHOWROOM & ATELIER</h2>
+            <p class="s-desc">당신의 감각을 깨우는 아카이브 공간을 오프라인에서 만나보세요.</p>
+        </div>
+
+        <div class="store-container">
+            <div class="store-map-wrapper">
+                <iframe class="map-iframe active" src="https://maps.google.com/maps?q=%EC%84%9C%EC%9A%B8%ED%8A%B9%EB%B3%84%EC%8B%9C%20%EC%84%B1%EB%8F%99%EA%B5%B8%20%EC%84%B1%EC%81%98%EB%8F%99&t=&z=15&ie=UTF-8&iwloc=&output=embed" allowfullscreen="" loading="lazy"></iframe>
+                <iframe class="map-iframe" src="https://maps.google.com/maps?q=%EC%84%9C%EC%9A%B8%ED%8A%B9%EB%B3%84%EC%8B%9C%20%EC%9A%A9%EC%82%B0%EA%B5%B8%20%ED%95%9C%EB%82%A8%EB%8F%99&t=&z=15&ie=UTF-8&iwloc=&output=embed" allowfullscreen="" loading="lazy"></iframe>
+                <iframe class="map-iframe" src="https://maps.google.com/maps?q=%EB%B6%80%EC%82%B0%EA%B2%BD%EC%97%AD%EC%8B%9C%20%ED%95%B4%EC%9A%B4%EB%8C%80%EA%B5%B8%20%EC%84%BC%ED%84%B0%EB%82%A8%EB%8C%80%EB%A1%9C%2035&t=&z=15&ie=UTF-8&iwloc=&output=embed" allowfullscreen="" loading="lazy"></iframe>
+            </div>
+
+            <div class="store-tabs">
+                <button class="store-tab-btn active" onclick="switchMap(0, this)">
+                    <strong>Seongsu Head Office</strong>
+                    <p>서울특별시 성동구 성수동 (MNEMO 성수 본점)</p>
+                    <p style="font-size:0.75rem; margin-top:8px; opacity:0.6;">T. 02-1234-5678 | Every 11:00 - 21:00</p>
+                </button>
+                <button class="store-tab-btn" onclick="switchMap(1, this)">
+                    <strong>Hannam Atelier</strong>
+                    <p>서울특별시 용산구 한남동 (한남 아뜰리에)</p>
+                    <p style="font-size:0.75rem; margin-top:8px; opacity:0.6;">T. 02-9876-5432 | Tue-Sun 12:00 - 20:00</p>
+                </button>
+                <button class="store-tab-btn" onclick="switchMap(2, this)">
+                    <strong>Busan Shinsegae</strong>
+                    <p>부산광역시 해운대구 센텀남대로 35 (신세계백화점 센텀시티점)</p>
+                    <p style="font-size:0.75rem; margin-top:8px; opacity:0.6;">T. 051-123-4567 | 백화점 영업시간과 동일</p>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- PRODUCT REGULATORY INFORMATION -->
+    <div class="regulatory-disclosure-section">
+        <div class="disclosure-title">Product Regulatory Information</div>
+        <div class="disclosure-title-grid">
+            <div class="disclosure-item">
+                <strong>품명 및 모델명</strong>
+                <p>므네모 시그니처 오 드 퍼퓸 (Rain 1998 / Midnight Echo / Dust Archive)</p>
+            </div>
+            <div class="disclosure-item">
+                <strong>화장품제조업자 및 화장품책임판매업자</strong>
+                <p>(주)므네모센트 아카이브 / 서울특별시 성동구 성수로 11길 6</p>
             </div>
         </div>
     </div>
 
-    <section id="scent-story" class="scent-story-section">
-        <div class="section-header">
-            <p class="s-subtitle">Science of Scent</p>
-            <h2 class="s-title">향기가 기억을 깨우는 순간</h2>
-        </div>
-        <div class="story-container">
-            <div class="content-left">
-                <h1 class="headline">SCENT KEEPS<br>YOUR MEMORY!</h1>
-                <p class="description">후각은 뇌의 기억 담당 부위와 직접 연결된 유일한 감각입니다. 찰나의 향기가 소중한 순간을 완벽하게 소환해 보세요.</p>
-                <a href="custom.html" class="cta-button">EXPLORE SCENT</a>
-            </div>
-            <div class="content-right-story">
-                <div class="oval-frame">
-                    <img src="rain_1.jpg" alt="Scent Memory">
-                </div>
-                <div class="decor-bar"><div class="decor-text" style="transform: rotate(180deg); white-space: nowrap;">RECALL MEMORY</div></div>
-            </div>
-        </div>
-    </section>
-
-    <footer>
-        <div>MNEMO ARCHIVE © 2026</div>
-        <div>Add to Archive +</div>
+    <!-- 하단 푸터 바 -->
+    <footer class="footer-bar">
+        <div class="footer-item">고객 서비스 (CUSTOMER CARE)</div>
+        <div class="footer-item">주문 및 배송 아카이브 (DELIVERY)</div>
+        <div class="footer-item">오프라인 스토어 정보 (STORES)</div>
+        <div class="footer-item">MNEMO ARCHIVE © 2026</div>
     </footer>
 
     <script>
-        function moveSlider(index) {
-            const slider = document.getElementById('mainSlider');
-            slider.style.transform = `translateX(-${index * 100}vw)`;
-            const items = document.querySelectorAll('.pg-item');
-            items.forEach((item, i) => {
-                i === index ? item.classList.add('active') : item.classList.remove('active');
-            });
-        }
+    /* GNB NAV LINK ACTIVE ON SCROLL */
+    const sections = document.querySelectorAll('section');
+    const navLinks = document.querySelectorAll('.nav-link');
+
+    window.addEventListener('scroll', ()=>{
+        let current = '';
+        sections.forEach(section=>{
+            const top = section.offsetTop;
+            if(scrollY >= top - 250){
+                current = section.getAttribute('id');
+            }
+        });
+
+        navLinks.forEach(link=>{
+            link.classList.remove('active');
+            if(link.getAttribute('href').includes(current)){
+                link.classList.add('active');
+            }
+        });
+    });
+
+    /* INTERSECTION OBSERVER FOR FADE-UP ANIMATION */
+    const observer = new IntersectionObserver((entries)=>{
+        entries.forEach(entry=>{
+            if(entry.isIntersecting){
+                entry.target.classList.add('show');
+            }
+        });
+    },{threshold:0.12});
+
+    const hiddenElements = document.querySelectorAll('.fade-up');
+    hiddenElements.forEach(el=>observer.observe(el));
+
+    /* SHOWROOM MAP SWITCH TAB INTERACTION */
+    function switchMap(index, targetBtn) {
+        const buttons = document.querySelectorAll('.store-tab-btn');
+        buttons.forEach(btn => btn.classList.remove('active'));
+        
+        targetBtn.classList.add('active');
+        
+        const iframes = document.querySelectorAll('.map-iframe');
+        iframes.forEach(iframe => {
+            iframe.classList.remove('active');
+            iframe.style.display = 'none';
+        });
+        
+        const selectedIframe = iframes[index];
+        selectedIframe.style.display = 'block';
+        setTimeout(() => {
+            selectedIframe.classList.add('active');
+        }, 50);
+    }
     </script>
+
 </body>
 </html>
